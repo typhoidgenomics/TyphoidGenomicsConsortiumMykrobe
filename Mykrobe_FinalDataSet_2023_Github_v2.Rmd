@@ -1,0 +1,400 @@
+---
+title: "Mykrobe_FinalDataSet_2023_Github_v2"
+author: "DanielleIngle"
+date: "31  October - 1 November 2023"
+output: html_document
+---
+
+---
+```{r setup, include=FALSE}
+require('knitr')
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = getwd())
+getwd()
+
+```
+
+```{r library}
+
+library(tidyverse)
+library(ggplot2)
+library(readxl)
+sessionInfo()
+```
+
+
+```{r files}
+#myrkobe data from Jane - updated version
+mykr.main <- read_tsv("../MykrobeData/mykrobe_out_15112022__predictResults.tsv")
+mykr.extra <- read_tsv("../MykrobeData/missing_genomes_28112022_predictResults.tsv")
+
+
+#bam python- ground truth from Zoe
+bam <- read_tsv("../GenotyphiBams/genotyphi_py_combined_15112022.txt")
+bam.extra <- read_tsv("../GenotyphiBams/genotyphi_py_2022.11.17_21_41_37_Rwanda.txt")
+bam.straata <- read_tsv("../GenotyphiBams/STRATAA.txt")
+
+
+#latest version of TCG data WG1 - from early Nov
+#keep for filtering duplicates and finalising list of isolates included
+tgc.id <- read_csv("/Users/daniellei/Documents/github/TyphoidGenomicsConsortiumWG2/TGC_data.csv")
+nrow(tgc.id)
+# version of TCG data - has the extra QC data that isn't in later versions - keEp for this
+#tgc.qc <- read_csv("/Users/daniellei/Documents/github/TyphoidConsortium20yrs/Final_data_20220713.csv")
+
+
+#updated for 2023 - redone with extra genotypes. Need for PW genotypes. Need to consider what cols to merge on - TGC ID is good for many but will also need BIOSAMPLE or NAME
+tgc.pw <- read_csv("../PublicData/PWdata_2023/PW_TyphiNET-DB_plus_Rwanda.csv")
+nrow(tgc.pw)
+
+```
+
+
+
+```{r bam }
+#bam  - merge three files together 
+colnames(bam)
+colnames(bam.extra)
+colnames(bam.straata)
+
+bam.merge <- rbind(bam, bam.extra, bam.straata)
+
+bam.all <- bam.merge %>% arrange(File)
+nrow(bam.all)
+
+write_csv(bam.all, "GenotyphiBAM_merge_31102023.csv")
+
+#check that have the difference between data and file header
+bam.all[13858,1]
+bam.all[13859,1]
+
+bam.all.fin <- bam.all[1:13858,]
+nrow(bam.all.fin)
+
+#bam get sanger id name clear from  File
+#mutate File to remove .sorted.vcf and anything like - sorted bams and variable before e.g. /lustre/scratch118/infgen/team216/jk27/typhinet/ZimbabweUnpublished/ghru_mapping/sorted_bams/PID_0267_H7_S163.sorted.vcf or 253A_13_S1.sorted.vcf
+#extract from bam + write out
+
+bam.all.fin$Sanger_ID <- bam.all.fin$File
+bam.fin <- bam.all.fin %>%  mutate(Sanger_ID = gsub(".sorted.vcf|.*/sorted_bams/", "", Sanger_ID)) 
+
+write_csv(bam.fin, "GenoTyphi_PythonBam_withDups_31102023.csv")
+
+#check duplicates
+sum(duplicated(bam.fin))
+nrow(bam.fin)
+nrow(distinct(bam.fin))
+
+#id duplicates
+bam.fin$Sanger_ID[duplicated(bam.fin$Sanger_ID)]
+
+
+#remove the duplicates where had no SNPs called against reference 
+bam.fin.snps <- bam.fin %>% filter(Final_call != "No SNPs encountered against expected reference. Wrong reference or no SNP calls?")
+
+table(bam.fin$Final_call)
+#732 - no call
+
+bam.fin.snps.pbm  <- bam.fin %>% filter(Final_call == "No SNPs encountered against expected reference. Wrong reference or no SNP calls?")
+write_csv(bam.fin.snps.pbm, "GenoTyphi_PythonBam_Pbm_n732_31102023.csv")
+nrow(bam.fin.snps.pbm)
+
+sum(duplicated(bam.fin.snps))
+bam.fin.snps$Sanger_ID[duplicated(bam.fin.snps$Sanger_ID)]
+
+#remove duplicates
+#data.inc.mykr <- data.inc.mykr.ori[!duplicated(data.inc.mykr.ori), ]
+#dataset, distinct values on Sanger id, keep all cols
+#https://dplyr.tidyverse.org/reference/distinct.html
+bam.fin.df <- distinct(bam.fin.snps, Sanger_ID, .keep_all = TRUE)
+nrow(bam.fin.df)
+
+paste("Number of isolates in bam dataset = ",nrow(bam.fin.df), sep ="")
+
+write_csv(bam.fin.df, "GenoTyphi_PythonBam_n13032_31102023.csv")
+
+```
+
+
+
+```{r mykrobe}
+
+#mykrobe  - merge two files together 
+colnames(mykr.main)
+colnames(mykr.extra)
+
+
+#the extra has some isolates in ERR - need to add in the TCG sanger id and merge of Data Accession from the WG2 
+mykr.extra[42,1]
+mykr.extra[43,1]
+
+nrow(mykr.extra)
+
+#id ones that have ERR and not sanger ID
+err.list <- mykr.extra$genome
+err.list[1:42]
+err.list <-err.list[43:387]
+#set up both files so can extract
+mykr.extra$err_acc <- mykr.extra$genome
+tgc.id$err_acc <- tgc.id$`Data Accession`
+
+
+#join with err_acc, data accession and TGC_sangerlane
+mykr.extra.dets <- mykr.extra %>% left_join(tgc.id[,c(1:2,113)], by = "err_acc" )
+
+###
+#add to new Sanger ID col
+mykr.extra.dets$Sanger_ID <- ifelse(mykr.extra.dets$genome %in% err.list, mykr.extra.dets$TGC_sangerlane, mykr.extra.dets$genome)
+
+
+write_csv(mykr.extra.dets,"Genotyphi_MYKROBE_missing_SangerIDsadded_withDuplicates_n387_3112023.csv")
+
+#there are duplicates of some isolates - had both Sanger ID and ERR - filter these out. 
+sum(duplicated(mykr.extra.dets$Sanger_ID ))
+nrow(mykr.extra.dets )
+mykr.extra.dets$Sanger_ID[duplicated(mykr.extra.dets$Sanger_ID)]
+
+mykr.extra.dets.df <- distinct(mykr.extra.dets, Sanger_ID, .keep_all = TRUE)
+nrow(mykr.extra.dets.df)
+write_csv(mykr.extra.dets.df,"Genotyphi_MYKROBE_missing_SangerIDsadded_NO_Duplicates_n346_31102023.csv")
+
+#add sanger id to main dataset for common name to bind
+mykr.main$Sanger_ID <- mykr.main$genome
+
+#merge two datasets = will drop the extra cols in mykr.extra
+myk.merge <- rbind(mykr.main, mykr.extra.dets.df[,c(1:74,78)])
+
+#check for duplicates
+sum(duplicated(myk.merge$Sanger_ID ))
+nrow(myk.merge )
+
+write_csv(myk.merge, "Genotyphi_MYKROBE_merge_withDups_n13181_31102023.csv")
+
+#id duplicates
+myk.merge$Sanger_ID[duplicated(myk.merge$Sanger_ID)]
+
+#remove  duplicate - ERR4992824 + 147 that had sanger ID in original and then ERR in misssing dataset (148 total)
+#data.inc.mykr <- data.inc.mykr.ori[!duplicated(data.inc.mykr.ori), ]
+#dataset, distinct values on Sanger id, keep all cols
+#https://dplyr.tidyverse.org/reference/distinct.html
+myk.merge.df <- distinct(myk.merge, Sanger_ID, .keep_all = TRUE)
+
+paste("Number of isolates in myk dataset = ",nrow(myk.merge.df), sep ="")
+
+write_csv(myk.merge.df, "Genotyphi_MYKROBE_merge_n13033_31102023.csv")
+
+```
+
+```{r TGC QC }
+
+#number of isolates in final TGC2 paper - 13003. Which 30 not in final number? 
+nrow(tgc.id)
+
+#subset to cols that want
+tgc.id$Sanger_ID <- tgc.id$TGC_sangerlane
+
+#subset to th TGC data
+#from tgc.id want Sanger_ID, PW_genotype,PW_genotyphiSNPs,exclude_assembly, exclude_assembly,exclude_hetSNVs
+
+#these are from 13003 isolates - some were excluded - not in final dataset. which ones? 
+table(tgc.id$exclude_assembly)
+table(tgc.id$exclude_hetSNVs)
+
+table(tgc.id$exclude_hetSNVs, tgc.id$exclude_assembly)
+
+#subset to include PW_display now SNPs - will need to add in from other spreadsheet
+tgc.df.dups <- tgc.id[,c(1:7,101:102,108,114)] 
+
+#three duplicates
+tgc.df.dups$Sanger_ID[duplicated(tgc.df.dups$Sanger_ID)]
+#"MQUL01" "MQUM01" "MQUO01"
+
+tgc.df <- distinct(tgc.df.dups, Sanger_ID, .keep_all = TRUE)
+nrow(tgc.df)
+
+paste("Number of isolates in TGC = ",nrow(tgc.df), sep ="")
+
+write_csv(tgc.df, "Genotyphi_QC_TGC_31102023_n13000.csv")
+
+```
+
+```{r merge two datasets bam and genotype}
+
+#get id list from PW datset - 13000 in it. The other datasets have extra ones in it - use this for the ones that are in WG2 paper. 
+
+tgc.list <- tgc.df$Sanger_ID
+
+#join in order of the isolates
+#bam then PW and then Myk
+#need to make sure genotype is clear
+bam.fin.df$Bam_GenotypeFinal <- bam.fin.df$Final_call
+#tgc.df$PW_GenotypeFinal <- tgc.df$PW_genotype
+myk.merge.df$Mykr_GenotypeFinal <- myk.merge.df$genotype
+
+genotype.2methods.df <- bam.fin.df[,c(12:13,2:10)] %>% filter(Sanger_ID %in% tgc.list) %>% left_join(tgc.df, by = "Sanger_ID") %>% left_join(myk.merge.df[,c(75:76,1:10)], by = c("Sanger_ID"))
+
+nrow(genotype.2methods.df)
+
+#write out
+write_csv(genotype.2methods.df, "GenoTyphi_Calls_TwoMethods_31102023.csv" )
+
+
+
+```
+
+
+```{r ones not in datasets}
+
+#two methods and the public data. 
+
+tgc.df.2methods <- tgc.df %>% left_join(genotype.2methods.df[,1:2], by = "Sanger_ID") %>% arrange(desc(Bam_GenotypeFinal))
+table(tgc.df.2methods$Bam_GenotypeFinal, useNA = "ifany")
+
+
+tgc.df.2methods.miss <- tgc.df.2methods %>% replace_na(list(Bam_GenotypeFinal = "nothere")) %>% filter(Bam_GenotypeFinal == "nothere")
+nrow(tgc.df.2methods.miss)
+
+write_csv(tgc.df.2methods.miss, "GenoTyphi_Calls_TwoMethods_31102023_n20Missed.csv" )
+
+#looked at these - same info in the WG1 paper - not link to any ERR or sanger id. Can't match. Flag with others. 
+tgc.df.2methods.miss$TGC_sangerlane
+```
+
+
+
+```{r filtering out isolates}
+
+#QC the isolates first. Then look at species flag from mykrobe
+nrow(genotype.2methods.df)
+
+#filter out those with mapping
+table( genotype.2methods.df$exclude_hetSNVs)
+
+#or those with assembly issues
+table(genotype.2methods.df$exclude_assembly)
+
+#numbers with both 
+table(genotype.2methods.df$exclude_assembly, genotype.2methods.df$exclude_hetSNVs)
+
+
+gt.calls.final<- genotype.2methods.df %>% filter(exclude_hetSNVs != TRUE) %>% filter(exclude_assembly != TRUE)
+paste("Number of isolates in QC'ed Typhi isolates  = ",nrow(gt.calls.final), sep ="")
+
+
+#check bam calls - that had something there
+pbm <- gt.calls.final %>% filter(Bam_GenotypeFinal == "No SNPs encountered against expected reference. Wrong reference or no SNP calls?")
+nrow(pbm)
+
+#get excluded isolates to check against later
+gt.calls.final.excluded <- genotype.2methods.df %>% filter(exclude_hetSNVs == TRUE | exclude_assembly == TRUE)
+paste("Number of isolates in QC'ed EXCLUDED Typhi isolates  = ",nrow(gt.calls.final.excluded), sep ="")
+
+gt.calls.final.excluded 
+write_csv(gt.calls.final.excluded, "GenoTyphi_Calls_twoMethods_QC_n141_QC_EXCLUDED_31102023.csv" )
+
+write_csv(gt.calls.final, "GenoTyphi_Calls_twoMethods_QC_n12939_31102023.csv" )
+
+
+```
+
+
+
+
+```{r Not Typhi}
+
+#filter those where called no typhi
+table(gt.calls.final$species, useNA = "ifany")
+
+gt.calls.filter.typhi <- gt.calls.final %>% filter(species == "typhi")
+notyphi <-gt.calls.final %>% replace_na(list(species = "fail")) %>% filter(species != "typhi")
+paste("Number of isolates in typhi isolates  = ",nrow(gt.calls.filter.typhi), sep ="")
+
+table(notyphi$Bam_GenotypeFinal)
+
+write_csv(gt.calls.filter.typhi, "GenoTyphi_Calls_twoMethods_TyphiOnly_n12834_31102023.csv" )
+write_csv(notyphi, "GenoTyphi_Calls_twoMethods_NoTyphi_n5_31102023.csv" )
+```
+
+
+
+```{r get PW genotypes}
+
+#use TGC_sangerlane and TGC ID - this gets a lot of the isolates
+#TGC ID from PW and TGC_sangerlane
+#the the Sample Accession + BIOSAMPLE
+#then use DisplayName - for a few of the french isolates NAME
+#ACCESSION and NAME the same
+
+tgc.pw$PW_GenotypeFinal <- tgc.pw$GENOTYPE
+
+table(tgc.pw$`Species Name`, useNA = 'ifany')
+
+# use tgc.id$PW_id and tgc.pw$`Genome ID` to merge
+pw.tgc.ids<- tgc.id[,c(1:18,107:108)] %>% left_join(tgc.pw, by=c("PW_id" = "Genome ID")) %>% replace_na(list(PW_GenotypeFinal = "NoPWdata")) 
+
+#917 with no genotype calls from PW.
+
+#final number 12106 - matched those in PW to the updated TGC. Some not in PW. Check also - those that excluded as merging with 12848 - that passed QC etc 
+
+write_csv(pw.tgc.ids,"PW_calls_TGCids_01112023.csv")
+
+```
+
+
+
+```{r merge to get three datasets}
+
+#merge in PW calls. 
+
+gtcalls.tgc<- gt.calls.final %>% left_join(pw.tgc.ids[,c(1,126,118:121)], by = "TGC_sangerlane") 
+nrow(gtcalls.tgc)
+
+table(gtcalls.tgc$species)
+table(gtcalls.tgc$`Species Name`, useNA = "ifany")
+
+#842 in the final dataset that don't have PW calls
+
+
+gtcalls.tgc.typhi <- gtcalls.tgc %>% filter(species == "typhi")
+nrow(gtcalls.tgc.typhi)
+
+write_csv(gtcalls.tgc,"TGC_Genotypes_3methods_n12842_01112023.csv")
+write_csv(gtcalls.tgc.typhi,"TGC_Genotypes_3methods_n12837_01112023.csv")
+
+
+gtcalls.tgc.nodeets <- gtcalls.tgc  %>% filter(PW_GenotypeFinal == "NoPWdata")
+nrow(gtcalls.tgc.nodeets)
+table(gtcalls.tgc.nodeets$PW_GenotypeFinal)
+
+write_csv(gtcalls.tgc.nodeets,"TGC_Genotypes_3methods_noPWcalls_n842_01112023.csv")
+
+paste("total number of Typhi (mykrobe) isolates with calls by three methods = 12837 - 842 (ones with no PW calls) = ",12837 - 842, sep ="" )
+```
+
+
+```{r follow up QC excluded and not typhi isolates}
+#follow up on isolates that were excluded for QC issues (n = 141) or because not typhi (n = 5)
+
+gt.calls.final.excluded.pw <- gt.calls.final.excluded %>% left_join(pw.tgc.ids[,c(1,126,118:121)], by = "TGC_sangerlane") 
+nrow(gt.calls.final.excluded.pw)
+#108 of these isolates had  call. 
+table(gt.calls.final.excluded.pw$PW_GenotypeFinal)
+
+write_csv(gt.calls.final.excluded.pw,"TGC_Genotypes_3methods_01112023_n141_QC_Excluded_TYPHI.csv")
+
+notyphi.pw <- notyphi %>% left_join(pw.tgc.ids[,c(1,126,118:121)], by = "TGC_sangerlane") 
+nrow(notyphi.pw)
+#5 of these isolates had  call. 
+table(notyphi.pw$PW_GenotypeFinal)
+table(notyphi.pw$Bam_GenotypeFinal)
+
+write_csv(notyphi.pw,"TGC_Genotypes_3methods_n5_NOT_TYPHI_01112023.csv")
+
+
+```
+
+
+
+
+
+
