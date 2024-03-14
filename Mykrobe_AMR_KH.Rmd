@@ -1,0 +1,208 @@
+---
+title: "Typhoid Genomics Consortium - Mykrobe - AMR"
+author: "Danielle Ingle, Kat Holt"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  prettydoc::html_pretty:
+    theme: cayman
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# set working directory to the location of the script
+knitr::opts_knit$set(root.dir = getwd())
+setwd(dirname(rstudioapi::getSourceEditorContext()$path))
+
+# load packages
+library(knitr)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+```
+
+# print session info (package versions)
+```{r session_info}
+
+# print versions
+sessionInfo()
+
+```
+
+# read genotype calls from Mykrobe and PW
+``` {r read_data}
+# read as a tibble
+amr <- read_csv("Mykrobe_AMRconcordance_18012024_n11992.csv")
+
+# print the dimensions of the table for reference
+dim(data)
+```
+
+# compare ESBL calls
+``` {r esbl}
+# which ESBLs did Mykrobe pick call? CTX-M-15, SHV-12
+amr %>% select(c(`MYK_blaCTX-M-15`, `MYK_blaSHV-12`, `MYK_blaOXA-134`, `MYK_AmpC1`)) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(c(`MYK_blaCTX-M-15`,starts_with("PW_blaCTX")))  %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(c(`MYK_blaSHV-12`,starts_with("PW_blaSHV")))  %>% group_by(pick(everything())) %>% count()
+
+# OXAs not detected by Mykrobe, but 1 detected by PW
+amr %>% select(c(starts_with("MYK_blaOXA"),starts_with("PW_blaOXA")))  %>% group_by(pick(everything())) %>% count()
+
+# no AmpC detected by either
+amr %>% select(c(`MYK_AmpC1`,starts_with("PW_amp")))  %>% group_by(pick(everything())) %>% count()
+
+```
+
+# compare ampicillin calls
+``` {r amp}
+# check TEM calls
+amr %>% select(`MYK_blaTEM-1D`, `PW_blaTEM-1D`) %>% group_by(pick(everything())) %>% count()
+
+````
+
+
+# compare azi calls
+``` {r azi}
+# check acrB calls
+amr %>% select(starts_with("MYK_acr"), starts_with("PW_acrB")) %>% group_by(pick(everything())) %>% count()
+
+````
+
+# compare chloramph calls
+``` {r chl}
+# check cat calls - one cmlA1, agreed by both methods, in a catA1+ strain
+amr %>% select(MYK_catA1,MYK_cmlA1, PW_catA1, PW_cmlA) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(MYK_catA1, PW_catA1) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(MYK_cmlA1, PW_cmlA) %>% group_by(pick(everything())) %>% count()
+````
+
+# compare cip calls
+``` {r cip}
+amr %>% select(starts_with("MYK_qnr"), starts_with("MYK_gyr"), starts_with("MYK_par")) %>% colSums()
+
+amr %>% select(starts_with("MYK_qnr"), starts_with("PW_qnr")) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(starts_with("MYK_qnrS1"), starts_with("PW_qnrS")) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(starts_with("MYK_qnrB1"), starts_with("PW_qnrB")) %>% group_by(pick(everything())) %>% count()
+  
+amr %>% select(starts_with("MYK_qnrD1"), starts_with("PW_qnrD")) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(starts_with("MYK_gyrA_S83"), starts_with("PW_gyrA_S83")) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(starts_with("MYK_gyrA_D87"), starts_with("PW_gyrA_D87")) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(starts_with("MYK_gyrA_D87Y"), starts_with("PW_gyrA_D87")) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(starts_with("MYK_gyrA_D87G"), starts_with("PW_gyrA_D87")) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(starts_with("MYK_gyrA_D87V"), starts_with("PW_gyrA_D87")) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(starts_with("MYK_gyrA_D87N"), starts_with("PW_gyrA_D87")) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(starts_with("MYK_parC_S80"), starts_with("PW_parC_S80")) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(starts_with("MYK_parC_E84"), starts_with("PW_parC_E84")) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(starts_with("MYK_gyrB"), starts_with("PW_gyrB")) %>% group_by(pick(everything())) %>% count()
+
+
+````
+
+
+# compare sul calls
+``` {r sul}
+# check sul calls 
+amr %>% select(MYK_sul1, MYK_sul2, PW_sul1, PW_sul2) %>% colSums()
+
+amr %>% select(MYK_sul1, PW_sul1) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(MYK_sul2, PW_sul2, PW_sul1) %>% group_by(pick(everything())) %>% count()
+
+````
+
+
+# compare dfr calls
+``` {r sul}
+# check dfr calls 
+amr %>% select(starts_with("MYK_dfr")) %>% colSums()
+
+amr %>% select(starts_with("MYK_dfr")) %>% group_by(pick(everything()))
+
+dfr_hits_MYK <- amr %>% select(starts_with("MYK_dfr")) %>% rowSums()
+dfr_hits_PW <- amr %>% select(starts_with("PW_dfr")) %>% select(-PW_dfra_any) %>% rowSums()
+
+table(dfr_hits_MYK)
+table(dfr_hits_PW)
+table(dfr_hits_MYK,dfr_hits_PW)
+
+amr %>% select(starts_with("MYK_dfr"), starts_with("PW_dfr")) %>% select(-PW_dfra_any) %>% group_by(pick(everything()))
+
+
+amr %>% select(MYK_dfrA1, starts_with("PW_dfr")) %>% select(-PW_dfra_any) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(MYK_dfrA5, starts_with("PW_dfr")) %>% select(-PW_dfra_any) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(MYK_dfrA7, starts_with("PW_dfr")) %>% select(-PW_dfra_any) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(MYK_dfrA14, starts_with("PW_dfr")) %>% select(-PW_dfra_any) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(MYK_dfrA15, starts_with("PW_dfr")) %>% select(-PW_dfra_any) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(MYK_dfrA17, starts_with("PW_dfr")) %>% select(-PW_dfra_any) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(MYK_dfrA18, starts_with("PW_dfr")) %>% select(-PW_dfra_any) %>% group_by(pick(everything())) %>% count()
+
+# presence by PW in those with nothing detected by PW
+amr %>% filter(dfr_hits_MYK==0) %>% select(starts_with("PW_dfr")) %>% select(-PW_dfra_any) %>% group_by(pick(everything())) %>% count()
+
+````
+
+# compare tet calls
+``` {r tet}
+# check tet calls 
+amr %>% select(starts_with("MYK_tet")) %>% select(-MYK_tetracycline) %>% colSums()
+
+amr %>% select(starts_with("MYK_tet"), starts_with("PW_tet")) %>% select(-MYK_tetracycline, -PW_tetracycline_category) %>% colSums()
+
+amr %>% select(starts_with("MYK_tet"), starts_with("PW_tet")) %>% select(-MYK_tetracycline, -PW_tetracycline_category) %>% group_by(pick(everything())) %>% count()
+
+amr %>% select(MYK_tetA, `PW_tetA(A)`) %>% group_by(pick(everything())) %>% count()
+amr %>% select(MYK_tetB, `PW_tetA(B)`) %>% group_by(pick(everything())) %>% count()
+amr %>% select(MYK_tetC, `PW_tetA(C)`) %>% group_by(pick(everything())) %>% count()
+amr %>% select(MYK_tetD, `PW_tetA(D)`) %>% group_by(pick(everything())) %>% count()
+
+````
+
+``` {r drugs}
+MYK_ampicillin	MYK_azithromycin	MYK_ceftriaxone	MYK_ciprofloxacin	MYK_chloramphenicol	MYK_sulfamethoxazole	MYK_sulfonamides	MYK_trimethoprim	MYK_tetracycline
+
+
+PW_azith_pred_pheno	PW_cip_pred_pheno	PW_cip_pheno_qrdr_gene	PW_dcs_category PW_num_qrdr
+PW_dfra_any	PW_sul_any	PW_co_trim	PW_MDR	PW_XDR	PW_ESBL_category	PW_chloramphenicol_category	PW_tetracycline_category
+
+table(MYK_ampicillin)
+
+amr %>% mutate(if_else(`PW_blaTEM`))
+
+table(amr$MYK_ampicillin)
+
+
+table(amr$MYK_ampicillin,amr$`PW_blaTEM-1D`)
+
+amr %>% group_by(MYK_ampicillin, `PW_blaTEM-1D`) %>% count()
+amr %>% group_by(MYK_azithromycin, `PW_azith_pred_pheno`) %>% count()
+amr %>% group_by(MYK_ceftriaxone, `PW_ESBL_category`) %>% count()
+amr %>% group_by(MYK_chloramphenicol, `PW_chloramphenicol_category`) %>% count()
+amr %>% group_by(MYK_ciprofloxacin!=S, `PW_cip_pred_pheno`) %>% count()
+amr %>% group_by(MYK_sulfonamides, `PW_sul_any`) %>% count()
+amr %>% group_by(MYK_trimethoprim, `PW_dfra_any`) %>% count()
+amr %>% group_by(MYK_tetracycline, `PW_tetracycline_category`) %>% count()
+
+```
