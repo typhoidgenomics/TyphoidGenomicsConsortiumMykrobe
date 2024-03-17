@@ -180,12 +180,9 @@ amr %>% select(MYK_tetD, `PW_tetA(D)`) %>% group_by(pick(everything())) %>% coun
 
 ````
 
+# drug-level
 ``` {r drugs}
-MYK_ampicillin	MYK_azithromycin	MYK_ceftriaxone	MYK_ciprofloxacin	MYK_chloramphenicol	MYK_sulfamethoxazole	MYK_sulfonamides	MYK_trimethoprim	MYK_tetracycline
 
-
-PW_azith_pred_pheno	PW_cip_pred_pheno	PW_cip_pheno_qrdr_gene	PW_dcs_category PW_num_qrdr
-PW_dfra_any	PW_sul_any	PW_co_trim	PW_MDR	PW_XDR	PW_ESBL_category	PW_chloramphenicol_category	PW_tetracycline_category
 
 table(MYK_ampicillin)
 
@@ -200,9 +197,693 @@ amr %>% group_by(MYK_ampicillin, `PW_blaTEM-1D`) %>% count()
 amr %>% group_by(MYK_azithromycin, `PW_azith_pred_pheno`) %>% count()
 amr %>% group_by(MYK_ceftriaxone, `PW_ESBL_category`) %>% count()
 amr %>% group_by(MYK_chloramphenicol, `PW_chloramphenicol_category`) %>% count()
-amr %>% group_by(MYK_ciprofloxacin!=S, `PW_cip_pred_pheno`) %>% count()
 amr %>% group_by(MYK_sulfonamides, `PW_sul_any`) %>% count()
 amr %>% group_by(MYK_trimethoprim, `PW_dfra_any`) %>% count()
 amr %>% group_by(MYK_tetracycline, `PW_tetracycline_category`) %>% count()
 
+# MDR
+amr <- amr %>% mutate(MYK_MDR=if_else(MYK_ampicillin!="S" & MYK_chloramphenicol!="S" & MYK_sulfonamides!="S" & MYK_trimethoprim!="S", 1, 0))
+
+table(amr$MYK_MDR, amr$PW_MDR)
+
+# cipro S/I/R
+amr <- amr %>% mutate(MYK_cipSIR=if_else(startsWith(MYK_ciprofloxacin, "I"), "I", "S")) %>% mutate(MYK_cipSIR=if_else(startsWith(MYK_ciprofloxacin, "R"), "R", MYK_cipSIR))
+
+table(amr$MYK_cipSIR, amr$PW_cip_pred_pheno)
+
+# XDR
+amr <- amr %>% mutate(MYK_XDR=if_else(MYK_MDR==1 & MYK_ceftriaxone!="S" & MYK_cipSIR=="R", 1, 0))
+
+table(amr$MYK_XDR, amr$PW_XDR)
+
 ```
+
+# SEAP DD data
+``` {r}
+myk.data.seap.dd <- read_csv("Myk_SEAP_DD_15012024_n2446.csv")
+```
+
+``` {r cef}
+# cef
+table(myk.data.seap.dd$`Ceftriaxone DD`)
+
+table(myk.data.seap.dd$`Ceftriaxone DD`, myk.data.seap.dd$Ceftriaxone)
+
+# use DD and refine S/I/R variable to include only those with a DD measure
+myk.data.seap.dd <- myk.data.seap.dd %>% mutate(Ceftriaxone=replace(Ceftriaxone, `Ceftriaxone DD` %in% c("Not Available", "Not performed"), NA))
+
+table(myk.data.seap.dd$`Ceftriaxone DD`, myk.data.seap.dd$Ceftriaxone)
+
+# N
+table(myk.data.seap.dd$Ceftriaxone %in% c("Resistant", "Susceptible"))
+# R
+table(myk.data.seap.dd$Ceftriaxone=="Resistant")
+# %R
+table(myk.data.seap.dd$Ceftriaxone=="Resistant")/table(myk.data.seap.dd$Ceftriaxone %in% c("Resistant", "Susceptible"))
+
+# errors
+# S
+table(myk.data.seap.dd$Ceftriaxone=="Susceptible")
+# S called as R - major error
+table(myk.data.seap.dd$ceftriaxone, myk.data.seap.dd$Ceftriaxone)
+
+```
+
+``` {r amp}
+# ampicillin pheno
+table(myk.data.seap.dd$`Ampicillin DD`)
+
+table(myk.data.seap.dd$`Ampicillin DD`, myk.data.seap.dd$Ampicillin)
+
+# use DD and refine S/I/R variable to include only those with a DD measure
+myk.data.seap.dd <- myk.data.seap.dd %>% mutate(Ampicillin=replace(Ampicillin, `Chloramphenicol DD` %in% c("Not Available", "Not performed"), NA))
+
+table(myk.data.seap.dd$`Ampicillin DD`, myk.data.seap.dd$Ampicillin)
+
+# N
+table(myk.data.seap.dd$Ampicillin %in% c("Resistant", "Susceptible"))
+# R
+table(myk.data.seap.dd$Ampicillin=="Resistant")
+# %R
+table(myk.data.seap.dd$Ampicillin=="Resistant")/table(myk.data.seap.dd$Ampicillin %in% c("Resistant", "Susceptible"))
+
+# errors
+# S
+table(myk.data.seap.dd$Ampicillin=="Susceptible")
+# S called as R - major error
+table(myk.data.seap.dd$ampicillin, myk.data.seap.dd$Ampicillin)
+
+# note 13 of TEM-negative carry CTX-M so should be ampR
+myk.data.seap.dd %>% group_by(ampicillin, Ampicillin, Ceftriaxone) %>% count()
+```
+
+``` {r azi}
+# azi pheno
+table(myk.data.seap.dd$`Azithromycin DD`)
+
+table(myk.data.seap.dd$`Azithromycin DD`, myk.data.seap.dd$Azithromycin)
+
+# use DD and refine S/I/R variable to include only those with a DD measure
+myk.data.seap.dd <- myk.data.seap.dd %>% mutate(Azithromycin=replace(Azithromycin, `Azithromycin DD` %in% c("Not Available", "Not performed"), NA))
+
+table(myk.data.seap.dd$`Azithromycin DD`, myk.data.seap.dd$Azithromycin)
+
+# N
+table(myk.data.seap.dd$Azithromycin %in% c("Resistant", "Susceptible"))
+# R
+table(myk.data.seap.dd$Azithromycin=="Resistant")
+# %R
+table(myk.data.seap.dd$Azithromycin=="Resistant")/table(myk.data.seap.dd$Azithromycin %in% c("Resistant", "Susceptible"))
+
+# errors
+# S
+table(myk.data.seap.dd$Azithromycin=="Susceptible")
+# S called as R - major error
+table(myk.data.seap.dd$azithromycin, myk.data.seap.dd$Azithromycin)
+
+
+myk.data.seap.dd %>% filter(Azithromycin=="Susceptible" & azithromycin!="S") %>% select(`Azithromycin DD`, genotype, azithromycin)
+
+myk.data.seap.dd %>% filter(Azithromycin=="Resistant" & azithromycin=="S") %>% select(`Azithromycin DD`, genotype, azithromycin)
+                                                                                        
+```
+
+``` {r chlor}
+# chloramphenicol pheno
+table(myk.data.seap.dd$`Chloramphenicol DD`)
+
+table(myk.data.seap.dd$`Chloramphenicol DD`, myk.data.seap.dd$Chloramphenicol)
+
+# use DD and refine S/I/R variable to include only those with a DD measure
+myk.data.seap.dd <- myk.data.seap.dd %>% mutate(Chloramphenicol=replace(Chloramphenicol, `Chloramphenicol DD` %in% c("Not Available", "Not performed"), NA))
+
+table(myk.data.seap.dd$`Chloramphenicol DD`, myk.data.seap.dd$Chloramphenicol)
+
+# N
+table(myk.data.seap.dd$Chloramphenicol %in% c("Resistant", "Susceptible"))
+# R
+table(myk.data.seap.dd$Chloramphenicol=="Resistant")
+# %R
+table(myk.data.seap.dd$Chloramphenicol=="Resistant")/table(myk.data.seap.dd$Chloramphenicol %in% c("Resistant", "Susceptible"))
+
+# errors
+# S
+table(myk.data.seap.dd$Chloramphenicol=="Susceptible")
+# S called as R - major error
+table(myk.data.seap.dd$chloramphenicol, myk.data.seap.dd$Chloramphenicol)
+
+```
+
+``` {r cip}
+# cip pheno
+table(myk.data.seap.dd$`Ciprofloxacin DD`)
+
+table(myk.data.seap.dd$`Ciprofloxacin DD`, myk.data.seap.dd$Ciprofloxacin)
+
+# use DD and refine S/I/R variable to include only those with a DD measure
+myk.data.seap.dd <- myk.data.seap.dd %>% mutate(Ciprofloxacin=replace(Ciprofloxacin, `Ciprofloxacin DD` %in% c("Not Available", "Not performed"), NA))
+
+table(myk.data.seap.dd$`Ciprofloxacin DD`, myk.data.seap.dd$Ciprofloxacin)
+
+# using the I threshold (I/R vs S)
+# N
+table(myk.data.seap.dd$Ciprofloxacin)
+# R
+table(myk.data.seap.dd$Ciprofloxacin)
+# %R
+table(myk.data.seap.dd$Ciprofloxacin !="Susceptible")/table(!is.na(myk.data.seap.dd$Ciprofloxacin))
+
+# errors
+# S
+table(myk.data.seap.dd$Ciprofloxacin=="Susceptible")
+# S called as R - major error
+table(myk.data.seap.dd$ciprofloxacin, myk.data.seap.dd$Ciprofloxacin)
+
+# using the R threshold (R vs I/S)
+
+# R
+table(myk.data.seap.dd$Ciprofloxacin=="Resistant")
+# %R
+table(myk.data.seap.dd$Ciprofloxacin=="Resistant")/table(!is.na(myk.data.seap.dd$Ciprofloxacin))
+
+
+# errors
+# S
+table(myk.data.seap.dd$Ciprofloxacin!="Resistant")
+
+# S called as R - major error
+table(myk.data.seap.dd$ciprofloxacin, myk.data.seap.dd$Ciprofloxacin)
+
+
+```
+
+
+``` {r co-tri}
+# co-tri pheno
+table(myk.data.seap.dd$`Cotrimoxazole DD`)
+
+table(myk.data.seap.dd$`Cotrimoxazole DD`, myk.data.seap.dd$Cotrimoxazole)
+
+# use DD and refine S/I/R variable to include only those with a DD measure
+myk.data.seap.dd <- myk.data.seap.dd %>% mutate(Cotrimoxazole=replace(Cotrimoxazole, `Cotrimoxazole DD` %in% c("Not Available", "Not performed"), NA))
+
+table(myk.data.seap.dd$`Cotrimoxazole DD`, myk.data.seap.dd$Cotrimoxazole)
+
+# N
+table(myk.data.seap.dd$Cotrimoxazole %in% c("Resistant", "Susceptible"))
+# R
+table(myk.data.seap.dd$Cotrimoxazole=="Resistant")
+# %R
+table(myk.data.seap.dd$Cotrimoxazole=="Resistant")/table(myk.data.seap.dd$Cotrimoxazole %in% c("Resistant", "Susceptible"))
+
+# errors
+# S
+table(myk.data.seap.dd$Cotrimoxazole=="Susceptible")
+# S called as R - major error
+table(myk.data.seap.dd$sulfamethoxazole, myk.data.seap.dd$Cotrimoxazole)
+
+```
+
+# UKHSA data
+``` {r}
+myk.data.uk.mic <- read_csv("Myk_UKHSA_MIC_15012024_n852.csv")
+```
+
+``` {r}
+# cef
+myk.data.uk.mic %>% group_by(ceftriaxone,`CRO  -    R> 0.5mg/L`) %>% summarise(n=n())
+
+# N
+nrow(myk.data.uk.mic)
+# R
+table(myk.data.uk.mic$`CRO  -    R> 0.5mg/L` =="R")
+# S
+table(myk.data.uk.mic$`CRO  -    R> 0.5mg/L` =="S")
+
+# geno/pheno
+table(myk.data.uk.mic$ceftriaxone, myk.data.uk.mic$`CRO  -    R> 0.5mg/L`)
+```
+
+``` {r}
+# amp
+myk.data.uk.mic %>% group_by(ceftriaxone,`AMX -   R> 8mg/L`) %>% summarise(n=n())
+
+# N
+nrow(myk.data.uk.mic)
+# R
+table(myk.data.uk.mic$`AMX -   R> 8mg/L` =="R")
+# S
+table(myk.data.uk.mic$`AMX -   R> 8mg/L` =="S")
+
+# geno/pheno, note 5 of TEM-negative carry CTX-M so should be ampR
+myk.data.uk.mic %>% group_by(ampicillin, ceftriaxone, `AMX -   R> 8mg/L`) %>% count()
+```
+``` {r}
+# azi
+myk.data.uk.mic %>% group_by(azithromycin,`AZM-    R> 16mg/L`) %>% summarise(n=n())
+
+# N
+nrow(myk.data.uk.mic)
+# R
+table(myk.data.uk.mic$`AZM-    R> 16mg/L` =="R")
+# S
+table(myk.data.uk.mic$`AZM-    R> 16mg/L` =="S")
+
+# geno/pheno
+table(myk.data.uk.mic$azithromycin, myk.data.uk.mic$`AZM-    R> 16mg/L`)
+```
+
+``` {r}
+# chlor
+myk.data.uk.mic %>% group_by(chloramphenicol,`CHL-    R> 8mg/L`) %>% summarise(n=n())
+
+# R & S
+table(myk.data.uk.mic$`CHL-    R> 8mg/L` )
+
+# geno/pheno
+table(myk.data.uk.mic$chloramphenicol, myk.data.uk.mic$`CHL-    R> 8mg/L`)
+```
+
+``` {r}
+# cipro
+myk.data.uk.mic %>% group_by(ciprofloxacin,`CIP -    R> 0.06mg/L - Typhi`) %>% summarise(n=n())
+
+# current, low breakpoint (I)
+# R & S
+table(myk.data.uk.mic$`CIP -    R> 0.06mg/L - Typhi` )
+
+# geno/pheno
+table(myk.data.uk.mic$ciprofloxacin, myk.data.uk.mic$`CIP -    R> 0.06mg/L - Typhi`)
+
+myk.data.uk.mic %>% filter(ciprofloxacin!="S" & `CIP -    R> 0.06mg/L - Typhi`=="S") %>% select(`CIP - Ciprofloxacin`, ciprofloxacin, genotype)
+
+
+
+# define high-level R group"
+myk.data.uk.mic <- myk.data.uk.mic %>% mutate(`CIP - R> 0.5 mg/l` = if_else(myk.data.uk.mic$`CIP - Ciprofloxacin` %in% c("1", "2", "4", "8", ">8"), "R", "S"))
+
+table(myk.data.uk.mic$`CIP - Ciprofloxacin`, myk.data.uk.mic$`CIP - R> 0.5 mg/l`)
+
+# R & S
+table(myk.data.uk.mic$`CIP - R> 0.5 mg/l`)
+
+# geno/pheno
+table(myk.data.uk.mic$ciprofloxacin, myk.data.uk.mic$`CIP - R> 0.5 mg/l`)
+
+myk.data.uk.mic %>% group_by(ciprofloxacin, myk.data.uk.mic$`CIP - R> 0.5 mg/l`) %>% count()
+
+# discrepancies
+myk.data.uk.mic %>% filter(ciprofloxacin=="S" & `CIP - R> 0.5 mg/l`=="R") %>% select(genotype, `CIP - Ciprofloxacin`, ciprofloxacin)
+myk.data.uk.mic %>% filter(startsWith(ciprofloxacin,"I") & `CIP - R> 0.5 mg/l`=="R") %>% select(genotype, `CIP - Ciprofloxacin`, ciprofloxacin)
+
+myk.data.uk.mic %>% filter(startsWith(ciprofloxacin,"R") & `CIP - R> 0.5 mg/l`=="S") %>% select(genotype, `CIP - Ciprofloxacin`, ciprofloxacin)
+```
+``` {r}
+# tet
+myk.data.uk.mic %>% group_by(tetracycline,`TET-    R> 32mg/L`) %>% summarise(n=n())
+
+# R & S
+table(myk.data.uk.mic$`TET-    R> 32mg/L` )
+
+# geno/pheno
+table(myk.data.uk.mic$tetracycline, myk.data.uk.mic$`TET-    R> 32mg/L`)
+```
+``` {r}
+# tmp
+myk.data.uk.mic %>% group_by(trimethoprim,`TMP-    R> 4mg/L`) %>% summarise(n=n())
+
+# R & S
+table(myk.data.uk.mic$`TMP-    R> 4mg/L` )
+
+# geno/pheno
+table(myk.data.uk.mic$trimethoprim, myk.data.uk.mic$`TMP-    R> 4mg/L`)
+
+# discrepancies
+myk.data.uk.mic %>% filter(trimethoprim=="R: dfrA7" & `TMP-    R> 4mg/L`=="S") %>% select(`TMP - Trimethoprim`, trimethoprim, genotype)
+```
+``` {r}
+# co-tri
+myk.data.uk.mic %>% group_by(sulfamethoxazole,`SXT -  S ≤ 2,  R > 4 mg/L`) %>% summarise(n=n())
+
+# R & S
+table(myk.data.uk.mic$`SXT -  S ≤ 2,  R > 4 mg/L` )
+
+# geno/pheno
+table(myk.data.uk.mic$sulfamethoxazole, myk.data.uk.mic$`SXT -  S ≤ 2,  R > 4 mg/L`)
+
+# discrepancies
+myk.data.uk.mic %>% filter(trimethoprim=="S" & `SXT -  S ≤ 2,  R > 4 mg/L`=="R") %>% select(`SXT - Trimethoprim-Sulfamethoxazole`, sulfamethoxazole, genotype)
+
+myk.data.uk.mic %>% filter(trimethoprim=="S" & `SXT -  S ≤ 2,  R > 4 mg/L`=="R") %>% select(`SXT - Trimethoprim-Sulfamethoxazole`, sulfamethoxazole, genotype)
+```
+# CDC data
+
+``` {r}
+myk.data.cdc.mic <- read_csv("Myk_CDC_MIC_15012024_n720.csv")
+
+```
+
+``` {r}
+# amp
+myk.data.cdc.mic %>% group_by(ampicillin,`AMP Concl`) %>% summarise(n=n())
+
+# R & S
+table(myk.data.cdc.mic$`AMP Concl` )
+
+# geno/pheno
+table(myk.data.cdc.mic$ampicillin, myk.data.cdc.mic$`AMP Concl`)
+
+myk.data.cdc.mic %>% group_by(ampicillin,ceftriaxone,`AMP Concl`) %>% summarise(n=n())
+
+# discrepancy
+myk.data.cdc.mic %>% filter(`AMP Concl`=="S" & ampicillin=="R: blaTEM-1D") %>% select(`AMP Rslt`, genotype)
+```
+
+``` {r}
+# azi
+myk.data.cdc.mic %>% group_by(azithromycin,`AZM Concl`) %>% summarise(n=n())
+
+# R & S
+table(myk.data.cdc.mic$`AZM Concl` )
+
+# geno/pheno
+table(myk.data.cdc.mic$azithromycin, myk.data.cdc.mic$`AZM Concl`)
+
+```
+``` {r}
+# cef
+myk.data.cdc.mic %>% group_by(ceftriaxone,`AXO Concl`) %>% summarise(n=n())
+
+# R & S
+table(myk.data.cdc.mic$`AXO Concl` )
+
+# geno/pheno
+table(myk.data.cdc.mic$ceftriaxone, myk.data.cdc.mic$`AXO Concl`)
+
+```
+
+``` {r}
+# chlor
+myk.data.cdc.mic %>% group_by(chloramphenicol,`CHL Concl`) %>% summarise(n=n())
+
+# R & S
+table(myk.data.cdc.mic$`CHL Concl` )
+
+# geno/pheno
+table(myk.data.cdc.mic$chloramphenicol, myk.data.cdc.mic$`CHL Concl`)
+
+```
+``` {r}
+# cip
+myk.data.cdc.mic %>% group_by(ciprofloxacin,`CIP Concl`) %>% summarise(n=n())
+
+# R & S
+table(myk.data.cdc.mic$`CIP Concl` )
+
+# geno/pheno
+table(myk.data.cdc.mic$ciprofloxacin, myk.data.cdc.mic$`CIP Concl`)
+
+myk.data.cdc.mic %>% filter(ciprofloxacin=="S" & myk.data.cdc.mic$`CIP Concl`!="S") %>% select(`CIP Rslt`, genotype)
+
+myk.data.cdc.mic %>% filter(ciprofloxacin!="S" & `CIP Concl`=="S") %>% select(`CIP Rslt`, genotype, ciprofloxacin)
+
+myk.data.cdc.mic %>% filter(!startsWith(ciprofloxacin,"R") & `CIP Concl`=="R") %>% select(`CIP Rslt`, genotype, ciprofloxacin)
+```
+
+``` {r}
+# co-tri
+myk.data.cdc.mic %>% group_by(sulfamethoxazole, `COT Concl`) %>% summarise(n=n())
+
+# R & S
+table(myk.data.cdc.mic$`COT Concl` )
+
+# geno/pheno
+table(myk.data.cdc.mic$sulfamethoxazole, myk.data.cdc.mic$`COT Concl`)
+
+myk.data.cdc.mic %>% filter(sulfamethoxazole=="S" & `COT Concl`=="R") %>% select(genotype, sulfamethoxazole, `COT Rslt`)
+```
+
+``` {r}
+# tet
+myk.data.cdc.mic %>% group_by(tetracycline, `TET Concl`) %>% summarise(n=n())
+
+# R & S
+table(myk.data.cdc.mic$`TET Concl` )
+
+# geno/pheno
+table(myk.data.cdc.mic$tetracycline, myk.data.cdc.mic$`TET Concl`)
+
+myk.data.cdc.mic %>% filter(sulfamethoxazole=="S" & `COT Concl`=="R") %>% select(genotype, sulfamethoxazole, `COT Rslt`)
+```
+
+``` {r}
+ast <- read_excel("/Users/katholt/Library/CloudStorage/GoogleDrive-drkatholt@gmail.com/.shortcut-targets-by-id/1Z17VPpNjbosWc2aHoPrBH1SBaTlaG5td/Typhi_Mykrobe/AST\ data.xlsx", sheet="all")
+```
+
+``` {r}
+ast %>% ggplot(aes(x=drug, y=as.numeric(`Major error %`), fill=study)) + 
+  geom_bar(stat="identity", position=position_dodge()) + 
+  coord_flip()
+
+ast %>% ggplot(aes(x=drug, y=as.numeric(`Very major Error (%)`), fill=study)) + 
+  geom_bar(stat="identity", position=position_dodge()) + 
+  coord_flip()
+
+ast %>% ggplot(aes(x=drug, y=Agreement, fill=study)) + 
+  geom_bar(stat="identity", position=position_dodge()) + 
+  coord_flip()
+
+ast %>% mutate(agreement_p=`Category errors`/N) %>%
+  mutate(agreement_min=Agreement - sqrt(agreement_p*(1-agreement_p)/N)*1.96) %>%
+  mutate(agreement_max=Agreement + sqrt(agreement_p*(1-agreement_p)/N)*1.96) %>%
+  mutate(agreement_max=replace(agreement_max, agreement_max>1,1)) %>%
+  mutate(group=paste(drug, study)) %>%
+  ggplot(aes(x=group, y=Agreement, col=study)) + 
+  geom_hline(yintercept=0.95, linetype=2) +
+  geom_hline(yintercept=0.99, linetype=2, col="darkgrey") +
+  geom_point() + 
+  geom_errorbar(aes(ymin=agreement_min, ymax=agreement_max)) + 
+  coord_flip() + theme_bw() + ylab("Categorical agreement")
+
+ast %>% mutate(ME_p=`S but called as R`/`total S`) %>%
+  mutate(ME_min=`Major error %` - sqrt(ME_p*(1-ME_p)/N)*1.96) %>%
+  mutate(ME_max=`Major error %` + sqrt(ME_p*(1-ME_p)/N)*1.96) %>%
+  mutate(ME_max=replace(ME_max, ME_max>1,1)) %>%
+  mutate(group=paste(drug, study)) %>%
+  ggplot(aes(x=group, y=`Major error %`, col=study)) + 
+  geom_hline(yintercept=0.03, linetype=2) +
+  #geom_hline(yintercept=0.99, linetype=2, col="darkgrey") +
+  geom_point() + 
+  geom_errorbar(aes(ymin=ME_min, ymax=ME_max)) + 
+  coord_flip() + theme_bw() + ylab("Major errors")
+```
+
+``` {r}
+ast %>% mutate(agreement_p=`Category errors`/N) %>%
+  mutate(agreement_min=Agreement - sqrt(agreement_p*(1-agreement_p)/N)*1.96) %>%
+  mutate(agreement_max=Agreement + sqrt(agreement_p*(1-agreement_p)/N)*1.96) %>%
+  mutate(agreement_max=replace(agreement_max, agreement_max>1,1)) %>%
+  mutate(drug=factor(drug,levels=rev(levels(factor(drug))))) %>%
+  mutate(study=factor(study,levels=c("CDC", "UKHSA", "SEAP"))) %>%
+  mutate(errors=if_else(as.numeric(`Major error %`)>0.03 | as.numeric(`Very major Error (%)`)>0.03, "flag", "ok")) %>%
+  mutate(errors=if_else(is.na(errors), "ok", errors)) %>% # azi UKHSA is NA as 0 called
+  mutate(errors2=if_else(as.numeric(`Major error %`)>0.03, "major >3%", "acceptable")) %>%
+  mutate(errors2=if_else(as.numeric(`Very major Error (%)`)>0.015, "very major >1.5%", errors2)) %>%
+  mutate(errors2=if_else(is.na(errors2), "acceptable", errors2)) %>% # azi UKHSA is NA as 0 called
+  ggplot(aes(x=drug, y=Agreement*100, col=errors2)) + 
+  facet_wrap(~study) +
+  #geom_hline(yintercept=0.95*100, linetype=2) +
+  #geom_hline(yintercept=0.99*100, linetype=2, col="darkgrey") +
+  geom_point() + 
+  geom_errorbar(aes(ymin=agreement_min*100, ymax=agreement_max*100), width=0.3) + 
+  scale_color_manual(values=c("navy", "orange", "red")) +
+  coord_flip() + 
+  theme_bw() + 
+  theme(axis.text.x = element_text(size=8), panel.spacing.x = unit(1, "lines")) +
+  labs(y="Categorical agreement (%)", x="", col="Errors")
+```
+
+``` {r}
+ggsave("categorical_agreement.pdf", width=9, height=3)
+ggsave("categorical_agreement.png", width=9, height=3, units="in")
+
+```
+
+
+# clean and combine the AST data
+``` {r}
+seap <- myk.data.seap.dd %>%
+  rename(`Ampicillin Result`=Ampicillin) %>%
+  rename(`Ampicillin Measure`=`Ampicillin DD`) %>%
+  rename(`Chloramphenicol Result`=Chloramphenicol) %>%
+  rename(`Chloramphenicol Measure`=`Chloramphenicol DD`) %>%
+  rename(`Ceftriaxone Result`=Ceftriaxone) %>%
+  rename(`Ceftriaxone Measure`=`Ceftriaxone DD`) %>%
+  rename(`Azithromycin Result`=Azithromycin) %>%
+  rename(`Azithromycin Measure`=`Azithromycin DD`) %>%
+  rename(`Ciprofloxacin Measure`=`Ciprofloxacin DD`) %>%
+  mutate(`Ciprofloxacin I Result` = replace(Ciprofloxacin, Ciprofloxacin=="Intermediate", "Resistant")) %>%
+  mutate(`Ciprofloxacin R Result` = replace(Ciprofloxacin, Ciprofloxacin=="Intermediate", "Susceptible")) %>%
+  rename(`Ciprofloxacin Result`=Ciprofloxacin) %>%
+  rename(`SXT Result`=Cotrimoxazole) %>%
+  rename(`SXT Measure`=`Cotrimoxazole DD`) %>% 
+  select(TGC_sangerlane, ends_with("Measure"), ends_with("Result")) %>%
+  mutate(across(ends_with("Result"), ~ substr(., 1, 1))) %>%
+  mutate(across(ends_with("Result"), ~ replace(., .=="N", NA))) %>%
+  mutate(across(ends_with("Measure"), ~ as.character(.))) %>%
+  mutate(dataset="SEAP") %>%
+  mutate(measure="DD") %>%
+  mutate(standard="CLSI") 
+
+cdc <- myk.data.cdc.mic %>%
+  rename(`Ampicillin Result`=`AMP Concl`) %>%
+  rename(`Ampicillin Measure`=`AMP Rslt`) %>%
+  rename(`Chloramphenicol Result`=`CHL Concl`) %>%
+  rename(`Chloramphenicol Measure`=`CHL Rslt`) %>%
+  rename(`Ceftriaxone Result`=`AXO Concl`) %>%
+  rename(`Ceftriaxone Measure`=`AXO Rslt`) %>%
+  rename(`Azithromycin Result`=`AZM Concl`) %>%
+  rename(`Azithromycin Measure`=`AZM Rslt`) %>%
+  mutate(`Ciprofloxacin I Result` = replace(`CIP Concl`, `CIP Concl`=="I", "R")) %>%
+  mutate(`Ciprofloxacin R Result` = replace(`CIP Concl`, `CIP Concl`=="I", "S")) %>%
+  rename(`Ciprofloxacin Result`=`CIP Concl`) %>%
+  rename(`Ciprofloxacin Measure`=`CIP Rslt`) %>%
+  rename(`SXT Result`=`COT Concl`) %>%
+  rename(`SXT Measure`=`COT Rslt`) %>%
+  rename(`Tetracycline Result`=`TET Concl`) %>%
+  rename(`Tetracycline Measure`=`TET Rslt`) %>% 
+  select(TGC_sangerlane, ends_with("Measure"), ends_with("Result")) %>%
+  mutate(across(ends_with("Measure"), ~ as.character(.))) %>%
+  mutate(dataset="CDC") %>%
+  mutate(measure="MIC") %>%
+  mutate(standard="CLSI")
+         
+ukhsa <- myk.data.uk.mic %>%
+  rename(`Ampicillin Result`=`AMX -   R> 8mg/L`) %>%
+  rename(`Ampicillin Measure`=`AMX - Amoxicillin`) %>%
+  rename(`Chloramphenicol Result`=`CHL-    R> 8mg/L`) %>%
+  rename(`Chloramphenicol Measure`=`CHL - Chloramphenicol`) %>%
+  rename(`Ceftriaxone Result`=`CRO  -    R> 0.5mg/L`) %>%
+  rename(`Ceftriaxone Measure`=`CRO - Ceftriaxone`) %>%
+  rename(`Azithromycin Result`=`AZM-    R> 16mg/L`) %>%
+  rename(`Azithromycin Measure`=`AZM - Azithromycin`) %>%
+  rename(`Ciprofloxacin I Result`=`CIP -    R> 0.06mg/L - Typhi`) %>%
+  rename(`Ciprofloxacin R Result`=`CIP - R> 0.5 mg/l`) %>%
+  rename(`Ciprofloxacin Measure`=`CIP - Ciprofloxacin`) %>%
+  rename(`SXT Result`=`SXT -  S ≤ 2,  R > 4 mg/L`) %>%
+  rename(`SXT Measure`=`SXT - Trimethoprim-Sulfamethoxazole`) %>%
+  rename(`Tetracycline Result`=`TET-    R> 32mg/L`) %>%
+  rename(`Tetracycline Measure`=`TET - Tetracycline`) %>% 
+  select(TGC_sangerlane, ends_with("Measure"), ends_with("Result")) %>%
+  mutate(across(ends_with("Measure"), ~ as.character(.))) %>%
+  mutate(dataset="UKHSA") %>%
+  mutate(measure="MIC") %>%
+  mutate(standard="EUCAST")
+         
+ast_data <- bind_rows(ukhsa, cdc, seap)
+
+```
+
+``` {r}
+mykrobe <- read_csv("Genotyphi_MYKROBE_merge_n13033_31102023.csv") %>%
+  mutate(TGC_sangerlane=genome)
+```
+
+``` {r}
+amr_ast <- full_join(mykrobe, ast_data)
+```
+
+``` {r}
+write.csv(amr_ast, file="SuppTable_geno_pheno_bysample.csv")
+```
+
+
+# clean AST analysis
+``` {r}
+amr_ast <- read_csv("SuppTable_geno_pheno_bysample.csv")
+```
+
+# make long form
+``` {r}
+# AST results
+ast_long <- amr_ast %>% filter(!is.na(dataset)) %>% 
+  select(TGC_sangerlane, dataset, measure, standard, ends_with("Result")) %>% 
+  select(-`Ciprofloxacin Result`) %>%
+  pivot_longer(cols=ends_with("Result"), names_to="Drug", values_to="Result", names_pattern =  "(.*) Result") %>%
+  mutate(Drug=replace(Drug, Drug=="SXT", "Trimethoprim-Sulfamethoxazole"))
+
+# genotypes
+geno_long <- amr_ast %>% filter(!is.na(dataset)) %>% 
+  select(TGC_sangerlane, ampicillin:tetracycline) %>%
+  select(-sulfonamides, -trimethoprim) %>%
+  mutate(`ciprofloxacin i`=ciprofloxacin) %>%
+  mutate(`ciprofloxacin i`=gsub("I:", "R:", `ciprofloxacin i`)) %>%
+  rename(`ciprofloxacin r`=ciprofloxacin) %>%
+  mutate(`ciprofloxacin r`=if_else(startsWith(`ciprofloxacin r`,"I"), "S", `ciprofloxacin r`)) %>%
+  mutate(ampicillin=if_else(startsWith(ceftriaxone, "R"), "R", ampicillin)) %>%
+  pivot_longer(cols=ampicillin:`ciprofloxacin i`, names_to="Drug", values_to="genotype") %>%
+  mutate(Drug=str_to_title(Drug)) %>%
+  mutate(Drug=replace(Drug, Drug=="Sulfamethoxazole", "Trimethoprim-Sulfamethoxazole"))
+
+# merge geno & pheno
+amr_ast_long <- full_join(ast_long, geno_long) %>% 
+  filter(!is.na(Result)) %>%
+  mutate(genotype_SR=if_else(startsWith(genotype, "R"), "R", genotype)) %>%
+  mutate(agree=if_else(genotype_SR==Result, 1, 0))
+
+```
+
+# calculate agreement and errors
+``` {r}
+ast_comparison <- amr_ast_long %>% 
+  group_by(Drug, dataset) %>% 
+  summarise(n=n(), 
+            R=sum(Result=="R"),
+            R_percent=R/n,
+            agree=sum(agree, na.rm=T), 
+            major=sum(Result=="S" & genotype_SR=="R", na.rm=T),
+            very_major=sum(Result=="R" & genotype_SR=="S", na.rm=T),
+            agree_p=agree/n,
+            major_p=major/sum(Result=="S", na.rm=T),
+            very_major_p=very_major/sum(Result=="R", na.rm=T)
+            )
+
+write_csv(file="SuppTable3_ASTvsGeno.csv",
+          ast_comparison %>% 
+            rename(Dataset=dataset) %>% 
+            mutate(R_percent=paste0(round(R_percent*100,2),"%")) %>%
+            mutate(categorical_agreement=paste0(round(agree_p*100,2),"%")) %>%
+            mutate(major_error_percent=paste0(round(major_p*100,2),"%")) %>%
+            mutate(very_major_error_percent=paste0(round(very_major_p*100,2),"%")) %>%
+            select(-agree_p, -major_p, -very_major_p)
+            )
+```
+
+# accuracy plot
+``` {r}
+ast_comparison %>% 
+  mutate(agreement_min=agree_p - sqrt(agree_p*(1-agree_p)/n)*1.96) %>%
+  mutate(agreement_max=agree_p + sqrt(agree_p*(1-agree_p)/n)*1.96) %>%
+  mutate(agreement_max=replace(agreement_max, agreement_max>1,1)) %>%
+  mutate(dataset=factor(dataset,levels=c("CDC", "UKHSA", "SEAP"))) %>%
+  mutate(errors=if_else(as.numeric(major_p)>0.03 | as.numeric(very_major_p)>0.03, "flag", "ok")) %>%
+  mutate(errors=if_else(is.na(errors), "ok", errors)) %>% # azi UKHSA is NA as 0 called
+  mutate(errors2=if_else(as.numeric(major_p)>0.03, "major >3%", "acceptable")) %>%
+  mutate(errors2=if_else(as.numeric(very_major_p)>0.015, "very major >1.5%", errors2)) %>%
+  mutate(errors2=if_else(is.na(errors2), "acceptable", errors2)) %>% # azi UKHSA is NA as 0 called
+  ggplot(aes(x=Drug, y=agree_p*100, col=errors2)) + 
+  facet_wrap(~dataset) +
+  geom_point() + 
+  geom_errorbar(aes(ymin=agreement_min*100, ymax=agreement_max*100), width=0.3) + 
+  scale_color_manual(values=c("navy", "orange", "red")) +
+  scale_x_discrete(limits=rev(levels(factor(ast_comparison$Drug)))) +
+  coord_flip() + 
+  theme_bw() + 
+  theme(axis.text.x = element_text(size=8), panel.spacing.x = unit(1, "lines")) +
+  labs(y="Categorical agreement (%)", x="", col="Errors")
+```
+``` {r}
+ggsave("categorical_agreement.pdf", width=9, height=3)
+ggsave("categorical_agreement.png", width=9, height=3, units="in")
+```
+
