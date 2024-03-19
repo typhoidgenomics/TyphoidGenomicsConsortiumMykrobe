@@ -125,7 +125,7 @@ amr %>% select(MYK_sul1, PW_sul1) %>% group_by(pick(everything())) %>% count()
 
 amr %>% select(MYK_sul2, PW_sul2, PW_sul1) %>% group_by(pick(everything())) %>% count()
 
-````
+```
 
 
 # compare dfr calls
@@ -218,6 +218,115 @@ table(amr$MYK_XDR, amr$PW_XDR)
 
 ```
 
+# plasmid calls - need full data from PW
+``` {r}
+#inc  <- read_csv("PW_Typhi__inctyper.csv")
+
+# pull PW call from TGC data file
+tgc <- read_csv("/Users/katholt/Documents/GitHub/TyphoidGenomicsConsortiumWG1/TGC_data.csv")
+
+inc <- tgc %>% select(TGC_sangerlane, `Inc Types`) %>% right_join(amr)
+
+inc %>% select(starts_with("MYK_Inc")) %>% colnames()
+```
+
+# inc calls
+``` {r}
+# check IncFIAHI1 calls 
+inc %>% mutate(PW_IncFIAHI1=str_count(`Inc Types`, "IncFIA\\(HI1\\)")) %>%
+  mutate(PW_IncFIAHI1=if_else(is.na(PW_IncFIAHI1), 0, PW_IncFIAHI1)) %>%
+  group_by(MYK_IncFIAHI1, PW_IncFIAHI1) %>% count()
+
+# check IncHI1A calls 
+inc %>% mutate(PW_IncHI1A=str_count(`Inc Types`, "IncHI1A")) %>%
+  mutate(PW_IncHI1A=if_else(is.na(PW_IncHI1A), 0, PW_IncHI1A)) %>%
+  group_by(MYK_IncHI1A, PW_IncHI1A) %>% count()
+
+# check IncHI1BR27 calls 
+inc %>% mutate(PW_IncHI1BR27=str_count(`Inc Types`, "IncHI1B\\(R27\\)")) %>%
+  mutate(PW_IncHI1BR27=if_else(is.na(PW_IncHI1BR27), 0, PW_IncHI1BR27)) %>%
+  group_by(MYK_IncHI1BR27, PW_IncHI1BR27) %>% count()
+
+# IncHI1 calls
+inc %>% mutate(PW_IncHI1A=str_count(`Inc Types`, "IncHI1A")) %>%
+  mutate(PW_IncHI1A=if_else(is.na(PW_IncHI1A), 0, PW_IncHI1A)) %>%
+  mutate(PW_IncHI1BR27=str_count(`Inc Types`, "IncHI1B\\(R27\\)")) %>%
+  mutate(PW_IncHI1BR27=if_else(is.na(PW_IncHI1BR27), 0, PW_IncHI1BR27)) %>%
+  group_by(MYK_IncHI1BR27, MYK_IncHI1A, PW_IncHI1BR27, PW_IncHI1A) %>% count()
+
+
+# check IncY calls 
+inc %>% mutate(PW_IncY=str_count(`Inc Types`, "IncY")) %>%
+  mutate(PW_IncY=if_else(is.na(PW_IncY), 0, PW_IncY)) %>%
+  group_by(MYK_IncY, PW_IncY) %>% count()
+
+# check IncX3 calls - we don't have IncX1?
+inc %>% mutate(PW_IncX3=str_count(`Inc Types`, "IncX3")) %>%
+  mutate(PW_IncX3=if_else(is.na(PW_IncX3), 0, PW_IncX3)) %>%
+  group_by(MYK_IncX3, PW_IncX3) %>% count()
+
+inc %>% mutate(PW_IncX1=str_count(`Inc Types`, "IncX1")) %>%
+  mutate(PW_IncX1=if_else(is.na(PW_IncX1), 0, PW_IncX1)) %>%
+  mutate(PW_IncX3=str_count(`Inc Types`, "IncX3")) %>%
+  mutate(PW_IncX3=if_else(is.na(PW_IncX3), 0, PW_IncX3)) %>%
+  group_by(MYK_IncX3, PW_IncX3, PW_IncX1) %>% count()
+
+# check IncHI2A calls 
+inc %>% mutate(PW_IncHI2A=str_count(`Inc Types`, "IncHI2\\-\\-IncHI2A")) %>%
+  mutate(PW_IncHI2A=if_else(is.na(PW_IncHI2A), 0, PW_IncHI2A)) %>%
+  group_by(MYK_IncHI2A, PW_IncHI2A) %>% count()
+
+# check IncI1 calls 
+inc %>% mutate(PW_IncI1=str_count(`Inc Types`, "IncI1")) %>%
+  mutate(PW_IncI1=if_else(is.na(PW_IncI1), 0, PW_IncI1)) %>%
+  group_by(MYK_IncI1, PW_IncI1) %>% count()
+
+# check IncL/M calls 
+inc %>% mutate(PW_IncL=str_count(`Inc Types`, "IncL")) %>%
+  mutate(PW_IncL=if_else(is.na(PW_IncL), 0, PW_IncL)) %>%
+  group_by(MYK_IncL_M, PW_IncL) %>% count()
+
+# check IncFIB_pHCM2 calls & PW_IncFIB_K calls, they don't overlap so treat separately
+#IncFIB(AP001918) - n=1
+#IncFIB(pN55391) - n=1
+inc %>% mutate(PW_IncFIB_pHCM2=str_count(`Inc Types`, "IncFIB\\(pHCM2\\)")) %>%
+  mutate(PW_IncFIB_pHCM2=if_else(is.na(PW_IncFIB_pHCM2), 0, PW_IncFIB_pHCM2)) %>%
+  mutate(PW_IncFIB_K=str_count(`Inc Types`, "IncFIB\\(K\\)")) %>%
+  mutate(PW_IncFIB_K=if_else(is.na(PW_IncFIB_K), 0, PW_IncFIB_K)) %>%
+  group_by(MYK_IncFIB_pHCM2, MYK_IncFIB_K, PW_IncFIB_pHCM2, PW_IncFIB_K) %>% count()
+
+inc %>% mutate(PW_IncFIB_pHCM2=str_count(`Inc Types`, "IncFIB\\(pHCM2\\)")) %>%
+  mutate(PW_IncFIB_pHCM2=if_else(is.na(PW_IncFIB_pHCM2), 0, PW_IncFIB_pHCM2)) %>%
+  group_by(MYK_IncFIB_pHCM2, PW_IncFIB_pHCM2) %>% count()
+
+# check IncFIB_K calls 
+inc %>% mutate(PW_IncFIB_K=str_count(`Inc Types`, "IncFIB\\(K\\)")) %>%
+  mutate(PW_IncFIB_K=if_else(is.na(PW_IncFIB_K), 0, PW_IncFIB_K)) %>%
+  group_by(MYK_IncFIB_K, PW_IncFIB_K) %>% count()
+
+# check IncN calls 
+inc %>% mutate(PW_IncN=str_count(`Inc Types`, "IncN")) %>%
+  mutate(PW_IncN=if_else(is.na(PW_IncN), 0, PW_IncN)) %>%
+  group_by(MYK_IncN, PW_IncN) %>% count()
+
+# check other plasmids detected by PW but not included in Mykrobe
+inc %>% filter(grepl('IncL', `Inc Types`) |
+                 grepl('IncFII', `Inc Types`) |
+                 grepl('pN55391', `Inc Types`) |
+                 grepl('pCRY', `Inc Types`) |
+                 grepl('p0111', `Inc Types`) |
+                 grepl('IncQ1', `Inc Types`) |
+                 grepl('IncP1', `Inc Types`) |
+                 grepl('pXuzhou21', `Inc Types`)) %>% 
+  group_by(`Inc Types`) %>% count()
+
+# only plasmid rep with n>1 is p0111 (n=118) but this is not associated with AMR genes (most p0111+ strains do not carry any acquired AMR genes)
+inc %>% filter(grepl('p0111', `Inc Types`)) %>% view()
+
+```
+
+
+# AST data
 # SEAP DD data
 ``` {r}
 myk.data.seap.dd <- read_csv("Myk_SEAP_DD_15012024_n2446.csv")
@@ -875,13 +984,13 @@ ast_comparison %>%
   facet_wrap(~dataset) +
   geom_point() + 
   geom_errorbar(aes(ymin=agreement_min*100, ymax=agreement_max*100), width=0.3) + 
-  scale_color_manual(values=c("navy", "orange", "red")) +
   scale_x_discrete(limits=rev(levels(factor(ast_comparison$Drug)))) +
   coord_flip() + 
   theme_bw() + 
   theme(axis.text.x = element_text(size=8), panel.spacing.x = unit(1, "lines")) +
   labs(y="Categorical agreement (%)", x="", col="Errors")
 ```
+
 ``` {r}
 ggsave("categorical_agreement.pdf", width=9, height=3)
 ggsave("categorical_agreement.png", width=9, height=3, units="in")

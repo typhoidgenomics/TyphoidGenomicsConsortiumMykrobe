@@ -190,6 +190,35 @@ sxt_ME_uk <- amr_ast %>% filter(dataset=="UKHSA" & `SXT Result`=="R" & sulfameth
 
 amr %>% filter(TGC_sangerlane %in% sxt_ME_uk) %>% select(MYK_sulfonamides, MYK_trimethoprim, MYK_sulfamethoxazole, starts_with("PW_dfr"), starts_with("PW_sul")) %>% view()
 
+amr %>% filter(TGC_sangerlane %in% sxt_ME_uk) %>% pull(PW_displayname)
+
+
+
+azi_VME_seap <- amr_ast %>% filter(dataset=="SEAP" & `Azithromycin Result`=="R" & !startsWith(azithromycin,"R")) %>% pull(TGC_sangerlane)
+
+amr %>% filter(TGC_sangerlane %in% azi_VME_seap) %>% select(starts_with("PW_acr")) %>% colSums()
+
+
+cef_VME_seap <- amr_ast %>% filter(dataset=="SEAP" & `Ceftriaxone Result`=="R" & !startsWith(ceftriaxone,"R")) %>% pull(TGC_sangerlane)
+
+amr %>% filter(TGC_sangerlane %in% cef_VME_seap) %>% select(starts_with("PW_bla")) %>% colSums()
+
+
+
+cipR_VME_seap <- amr_ast %>% filter(dataset=="SEAP" & `Ciprofloxacin R Result`=="R" & !startsWith(ciprofloxacin,"R")) %>% pull(TGC_sangerlane)
+
+amr %>% filter(TGC_sangerlane %in% cipR_VME_seap) %>% select(starts_with("PW_gyr"), starts_with("PW_par"), starts_with("PW_qnr")) %>% colSums()
+
+amr %>% filter(TGC_sangerlane %in% cipR_VME_seap) %>% group_by(PW_cip_pred_pheno) %>% count()
+
+amr %>% filter(TGC_sangerlane %in% cipR_VME_seap) %>% filter(PW_cip_pred_pheno=="CipR") %>% select(MYK_ciprofloxacin, TGC_sangerlane, PW_displayname, `Data Accession`, starts_with("PW_gyr"), starts_with("PW_par"), starts_with("PW_qnr"))
+
+
+
+cipI_VME_seap <- amr_ast %>% filter(dataset=="SEAP" & `Ciprofloxacin I Result`=="R" & ciprofloxacin=="S") %>% pull(TGC_sangerlane)
+
+amr %>% filter(TGC_sangerlane %in% cipI_VME_seap) %>% select(starts_with("PW_gyr"), starts_with("PW_par"), starts_with("PW_qnr")) %>% colSums()
+
 ```
 
 
@@ -212,8 +241,8 @@ cip_mic <- amr_ast %>%
   mutate(ParC80 = str_count(ciprofloxacin, "parC_S80")) %>%
   mutate(ParC84 = str_count(ciprofloxacin, "parC_E84")) %>%
   mutate(QRDR_mutations = GyrA_mutations+ParC_mutations+GyrB464) %>%
-  mutate(wt_QRDR = if_else(QRDR_mutations==0, 1, 0)) %>%
-  mutate(qnr = str_count(ciprofloxacin, "qnr")) %>%
+  mutate(`wt QRDR` = if_else(QRDR_mutations==0, 1, 0)) %>%
+  mutate(`qnr gene` = str_count(ciprofloxacin, "qnr")) %>%
   mutate(cip_pheno = if_else(cip_MIC >0.06, "I", "S")) %>%
   mutate(cip_pheno = if_else(cip_MIC >0.5, "R", cip_pheno)) %>%
   mutate(cip_pheno=factor(cip_pheno, levels=c("S","I","R")))
@@ -223,22 +252,22 @@ upset_cip_mic_UK <- cip_mic %>%
   filter(dataset=="UKHSA") %>%
   mutate(cip_pheno = if_else(cip_MIC >0.06, "R", "S")) %>%
   upset(name='Genotype', themes=upset_default_themes(text=element_text(size=8)),
-      intersect=c( "qnr", "GyrB464", "ParC84","ParC80", "GyrA87","GyrA83","wt_QRDR"),
+      intersect=c( "qnr gene", "GyrB464", "ParC84","ParC80", "GyrA87","GyrA83","wt QRDR"),
       sort_sets=F,
       intersections=list(
-        'wt_QRDR',
+        'wt QRDR',
         'GyrB464', 'GyrA83', 'GyrA87',
         c('GyrA83', 'GyrA87'),
         c('GyrA83', 'ParC80'),
         c('GyrA83', 'ParC84'),
         c('GyrA83', 'GyrA87','ParC80'),
-        c('wt_QRDR', 'qnr'),
-        c('GyrA83', 'qnr'),
-        c('GyrB464', 'qnr'),
-        c('GyrA83', 'GyrA87','ParC80', 'qnr')
+        c('wt QRDR', 'qnr gene'),
+        c('GyrA83', 'qnr gene'),
+        c('GyrB464', 'qnr gene'),
+        c('GyrA83', 'GyrA87','ParC80', 'qnr gene')
       ),
       sort_intersections=F,
-      set_sizes=(upset_set_size() +
+      set_sizes=(upset_set_size(position='right') +
                     theme(axis.text.x=element_text(angle=45),axis.ticks.x=element_line(),axis.title=element_text(size=8))),
       base_annotations=list( # add stacked barplot
         'Percent of genomes'=list(
@@ -260,7 +289,7 @@ upset_cip_mic_UK <- cip_mic %>%
               scale_color_manual(values = c("IndianRed", "grey"))+
               scale_y_continuous(trans = log2_trans(), breaks = c(0.0075, 0.015, 0.03, 0.06, 0.125, 0.25, 0.5, 1, 2, 4, 8, 16)) +
               theme(legend.position = "none", axis.title=element_text(size=8)) +
-            ggtitle("UKHSA")
+            ggtitle("a) UKHSA")
         )
       )
     ) + patchwork::plot_layout(heights=c(2,1,1)) # relative heights of plotting areas
@@ -269,21 +298,22 @@ upset_cip_mic_UK <- cip_mic %>%
 upset_cip_mic_CDC <- cip_mic %>%
   filter(dataset=="CDC") %>%
   upset(name='Genotype', themes=upset_default_themes(text=element_text(size=8)),
-      intersect=c( "qnr", "GyrB464", "ParC84","ParC80", "GyrA87","GyrA83","wt_QRDR"),
+      intersect=c( "qnr gene", "GyrB464", "ParC84","ParC80", "GyrA87","GyrA83","wt QRDR"),
       sort_sets=F,
       intersections=list(
-        'wt_QRDR',
+        'wt QRDR',
         'GyrB464', 'GyrA83', 'GyrA87',
         c('GyrA83', 'GyrA87'),
         c('GyrA83', 'ParC80'),
         c('GyrA83', 'ParC84'),
         c('GyrA83', 'GyrA87','ParC80'),
-        c('wt_QRDR', 'qnr'),
-        c('GyrA83', 'qnr')
+        c('wt QRDR', 'qnr gene'),
+        c('GyrA83', 'qnr gene')
       ),
       sort_intersections=F,
-      set_sizes=(upset_set_size() +
+      set_sizes=(upset_set_size(position='right') +
                     theme(axis.text.x=element_text(angle=45),axis.ticks.x=element_line(),axis.title=element_text(size=8))),
+      guides='over',
       base_annotations=list( # add stacked barplot
         'Percent of genomes'=list(
         aes=aes(x=intersection, fill=cip_pheno),
@@ -298,8 +328,8 @@ upset_cip_mic_CDC <- cip_mic %>%
       annotations= list( # add violin plot with MIC data
         'MIC measurement (mg/L)'=(
             ggplot(mapping=aes(y=as.numeric(cip_MIC))) +
-              geom_hline(aes(yintercept = 1), linetype = 2, alpha = 0.6, color = "black")  +
-              geom_hline(aes(yintercept = 0.125), linetype = 1, alpha = 0.6, color = "black")  +
+              geom_hline(aes(yintercept = 1), linetype = 1, alpha = 0.6, color = "black")  +
+              geom_hline(aes(yintercept = 0.125), linetype = 2, alpha = 0.6, color = "black")  +
               geom_violin()+ 
               geom_count(aes(colour = cip_pheno))+
               scale_color_manual(values = c("grey", "#EEBB74", "IndianRed"))+
@@ -307,7 +337,7 @@ upset_cip_mic_CDC <- cip_mic %>%
               guides(size = "none") +
               labs(colour = "Phenotype") +
               theme(legend.position = "right", axis.title=element_text(size=8)) +
-            ggtitle("US CDC")
+            ggtitle("b) US CDC")
         )
       )
     ) +
@@ -319,6 +349,189 @@ upset_cip_mic_CDC <- cip_mic %>%
 ``` {r}
 upset_cip_mic_UK | upset_cip_mic_CDC
 
-ggsave("Cip_MIC.pdf", width=9, height=4.5)
-ggsave("CIP_MIC.png", width=9, height=4.5, units="in")
+ggsave("Fig3_Cip_MIC.pdf", width=9, height=5)
+ggsave("Fig3_CIP_MIC.png", width=9, height=5, units="in")
+```
+
+
+# Fig 4 - SEAP upset plots
+
+## Fig 4a - azi
+``` {r}
+
+azi_dd <- amr_ast %>% 
+  filter(dataset =="SEAP") %>%
+  filter(!startsWith(`Azithromycin Measure`,"Not")) %>% 
+  mutate(`AcrB R717L` = str_count(azithromycin, "acrB_R717L")) %>%
+  mutate(`AcrB R717Q` = str_count(azithromycin, "acrB_R717Q")) %>%
+  mutate(`wt AcrB` = if_else(`AcrB R717L`==0 & `AcrB R717Q`==0, 1, 0)) %>%
+  mutate(azi_pheno = if_else(as.numeric(`Azithromycin Measure`) <=12, "R", "S")) %>%
+  mutate(azi_pheno=factor(azi_pheno, levels=c("S","R")))
+
+
+upset_azi_SEAP <- azi_dd %>%
+  upset(name='Genotype', themes=upset_default_themes(text=element_text(size=8)),
+      intersect=c("AcrB R717Q","AcrB R717L","wt AcrB"),
+      sort_sets=F,
+      intersections=list(
+        'wt AcrB',
+        'AcrB R717L', 
+        'AcrB R717Q'
+      ),
+      sort_intersections=F,
+      set_sizes=F,
+      guides='over',
+      base_annotations=list( # add stacked barplot
+        'Percent of genomes'=list(
+        aes=aes(x=intersection, fill=azi_pheno),
+          geom=list(
+            geom_bar(stat='count', position='fill'), 
+            theme(legend.position = "none", axis.title=element_text(size=8)),
+            scale_fill_manual(values = c("grey", "IndianRed")),
+            scale_y_continuous(labels=scales::percent_format()),
+            geom_text(aes(label=..count..), stat="count", position=position_fill(vjust = .5), angle = 45, size=2))
+        )
+      ), 
+      annotations= list( # add violin plot with DD data
+        'Disk zone measurement (mm)'=(
+            ggplot(mapping=aes(y=as.numeric(`Azithromycin Measure`))) +
+              geom_hline(aes(yintercept = 12), linetype = 1, alpha = 0.6, color = "black")  +
+              geom_violin()+ 
+              geom_count(aes(colour = azi_pheno))+
+              scale_color_manual(values = c("grey", "IndianRed"))+
+              scale_y_continuous(breaks=c(0,10,20,30,40), limits=c(0,40)) +
+              theme(legend.position = "none", axis.title=element_text(size=8)) +
+            ggtitle("a) Azithromycin")
+        )
+      )
+    ) + patchwork::plot_layout(heights=c(2,1,1)) # relative heights of plotting areas
+
+upset_azi_SEAP
+```
+
+## Fig 4b - cef
+``` {r}
+
+cef_dd <- amr_ast %>% 
+  filter(dataset =="SEAP") %>%
+  filter(!startsWith(`Ceftriaxone Measure`,"Not")) %>% 
+  mutate(`No ESBL` = if_else(ceftriaxone=="S", 1, 0)) %>%
+  mutate(cef_pheno = if_else(as.numeric(`Ceftriaxone Measure`) <=22, "I", "S")) %>%
+  mutate(cef_pheno = if_else(as.numeric(`Ceftriaxone Measure`) <=19, "R", cef_pheno)) %>%
+  mutate(cef_pheno=factor(cef_pheno, levels=c("S","I","R")))
+
+
+upset_cef_SEAP <- cef_dd %>%
+  upset(name='Genotype', themes=upset_default_themes(text=element_text(size=8)),
+      intersect=c("blaCTX-M-15","No ESBL"),
+      sort_sets=F,
+      intersections=list(
+        'No ESBL',
+        'blaCTX-M-15'
+      ),
+      sort_intersections=F,
+      set_sizes=F,
+      guides='over',
+      base_annotations=list( # add stacked barplot
+        ' '=list( # using ' ' as the title to suppress the y-axis legend in the multi-panel plot
+        aes=aes(x=intersection, fill=cef_pheno),
+          geom=list(
+            geom_bar(stat='count', position='fill'), 
+            theme(legend.position = "none", axis.title=element_text(size=8)),
+            scale_fill_manual(values = c("grey", "#EEBB74", "IndianRed")),
+            scale_y_continuous(labels=scales::percent_format()),
+            geom_text(aes(label=..count..), stat="count", position=position_fill(vjust = .5), angle = 45, size=2))
+        )
+      ), 
+      annotations= list( # add violin plot with DD data
+        '   '=(  # using ' ' as the title to suppress the y-axis legend in the multi-panel plot
+            ggplot(mapping=aes(y=as.numeric(`Ceftriaxone Measure`))) +
+              geom_hline(aes(yintercept = 19), linetype = 1, alpha = 0.6, color = "black")  +
+              geom_hline(aes(yintercept = 23), linetype = 2, alpha = 0.6, color = "black")  +
+              geom_violin()+ 
+              geom_count(aes(colour = cef_pheno))+
+              scale_color_manual(values = c("grey", "#EEBB74", "IndianRed"))+
+              scale_y_continuous(breaks=c(0,10,20,30,40), limits=c(0,40)) +
+              theme(legend.position = "none", axis.title=element_text(size=8)) +
+            ggtitle("b) Ceftriaxone")
+        )
+      )
+    ) + patchwork::plot_layout(heights=c(2,1,1)) # relative heights of plotting areas
+
+upset_cef_SEAP
+```
+
+## Fig 4c - cipro
+``` {r}
+
+cip_dd <- amr_ast %>% 
+  filter(dataset =="SEAP") %>%
+  filter(!startsWith(`Ciprofloxacin Measure`,"Not")) %>% 
+  mutate(GyrA_mutations = str_count(ciprofloxacin, "gyrA")) %>%
+  mutate(GyrA83 = str_count(ciprofloxacin, "gyrA_S83")) %>%
+  mutate(GyrA87 = str_count(ciprofloxacin, "gyrA_D87")) %>%
+  mutate(GyrB464 = str_count(ciprofloxacin, "gyrB_S464")) %>%
+  mutate(ParC_mutations = str_count(ciprofloxacin, "parC")) %>% 
+  mutate(ParC80 = str_count(ciprofloxacin, "parC_S80")) %>%
+  mutate(ParC84 = str_count(ciprofloxacin, "parC_E84")) %>%
+  mutate(QRDR_mutations = GyrA_mutations+ParC_mutations+GyrB464) %>%
+  mutate(`wt QRDR` = if_else(QRDR_mutations==0, 1, 0)) %>%
+  mutate(`qnr gene` = str_count(ciprofloxacin, "qnr")) %>%
+  mutate(cip_pheno = if_else(as.numeric(`Ciprofloxacin Measure`) <=30, "I", "S")) %>%
+  mutate(cip_pheno = if_else(as.numeric(`Ciprofloxacin Measure`) <=20, "R", cip_pheno)) %>%
+  mutate(cip_pheno=factor(cip_pheno, levels=c("S","I","R")))
+
+
+upset_cip_SEAP <- cip_dd %>%
+  upset(name='Genotype', themes=upset_default_themes(text=element_text(size=8)),
+      intersect=c( "qnr gene", "GyrB464", "ParC84","ParC80", "GyrA87","GyrA83","wt QRDR"),
+      sort_sets=F,
+      intersections=list(
+        'wt QRDR',
+        'GyrB464', 'GyrA83', 'GyrA87',
+        c('GyrA83', 'GyrA87'),
+        c('GyrA83', 'ParC84'),
+        c('GyrA83', 'GyrA87','ParC80'),
+        c('GyrA83', 'qnr gene')
+      ),
+      sort_intersections=F,
+      set_sizes=(upset_set_size(position='right') +
+                    theme(axis.text.x=element_text(angle=45), axis.ticks.x=element_line(), axis.title=element_text(size=8))),
+      guides='over',
+      base_annotations=list( # add stacked barplot
+        ' '=list( # using ' ' as the title to suppress the y-axis legend in the multi-panel plot
+        aes=aes(x=intersection, fill=cip_pheno),
+          geom=list(
+            geom_bar(stat='count', position='fill'), 
+            theme(legend.position = "none", axis.title=element_text(size=8)),
+            scale_fill_manual(values = c("grey", "#EEBB74", "IndianRed")),
+            scale_y_continuous(labels=scales::percent_format()),
+            geom_text(aes(label=..count..), stat="count", position=position_fill(vjust = .5), angle = 45, size=2))
+        )
+      ), 
+      annotations= list( # add violin plot with DD data
+        '  '=(  # using '  ' as the title to suppress the y-axis legend in the multi-panel plot
+            ggplot(mapping=aes(y=as.numeric(`Ciprofloxacin Measure`))) +
+              geom_hline(aes(yintercept = 20), linetype = 1, alpha = 0.6, color = "black")  +
+              geom_hline(aes(yintercept = 30), linetype = 2, alpha = 0.6, color = "black")  +
+              geom_violin()+ 
+              geom_count(aes(colour = cip_pheno))+
+              scale_color_manual(values = c("grey", "#EEBB74", "IndianRed"))+
+              scale_y_continuous(breaks=c(0,10,20,30,40), limits=c(0,40)) +
+              guides(size = "none") +
+              labs(colour = "Phenotype") +
+              theme(legend.position = "right", axis.title=element_text(size=8)) +
+            ggtitle("c) Ciprofloxacin")
+        )
+      )
+    ) + patchwork::plot_layout(heights=c(2,1,1)) # relative heights of plotting areas
+
+upset_cip_SEAP
+```
+# write Fig4 to PDF & PNG
+``` {r}
+(upset_azi_SEAP | upset_cef_SEAP | upset_cip_SEAP) + plot_layout(widths=c(1,1,3))
+
+ggsave("Fig4_SEAP_AST.pdf", width=9, height=5)
+ggsave("Fig4_SEAP_AST.png", width=9, height=5, units="in")
 ```
