@@ -40,7 +40,7 @@ ont <- read_csv("Supplementary_Table_6.csv")
 
 ```
 
-#species call
+# species call
 ```{r}
 
 ont %>% group_by(ONT_species,species)  %>% count()
@@ -76,7 +76,7 @@ ont.typhi %>% select(`ONT_trimethoprim-sulfamethoxazole`, `trimethoprim-sulfamet
 
 ```
 
-#numbers for text - plasmid replicons
+# numbers for text - plasmid replicons
 ```{r}
 
 #IncFIAHI1 

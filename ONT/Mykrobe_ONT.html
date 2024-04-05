@@ -138,7 +138,9 @@ a.sourceLine {
 <div class="toc-box">
 <ul>
 <li><a href="#print-session-info-package-versions">print session info (package versions)</a></li>
+<li><a href="#species-call">species call</a></li>
 <li><a href="#numbers-for-text---amr">numbers for text - AMR</a></li>
+<li><a href="#numbers-for-text---plasmid-replicons">numbers for text - plasmid replicons</a></li>
 </ul>
 </div>
 </div>
@@ -211,7 +213,9 @@ a.sourceLine {
 ##   # ... with 33 more columns
 ## )
 ## ℹ Use `spec()` for the full column specifications.</code></pre>
-<p>#species call</p>
+</div>
+<div id="species-call" class="section level1">
+<h1>species call</h1>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ont <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ONT_species,species)  <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 3 × 3
 ## # Groups:   ONT_species, species [3]
@@ -300,7 +304,9 @@ a.sourceLine {
 ## 3 R: dfrA7;sul1                       R: dfrA7;sul1                       2
 ## 4 R: dfrA7;sul1;sul2                  R: dfrA7;sul1;sul2                 19
 ## 5 S                                   S                                  60</code></pre>
-<p>#numbers for text - plasmid replicons</p>
+</div>
+<div id="numbers-for-text---plasmid-replicons" class="section level1">
+<h1>numbers for text - plasmid replicons</h1>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncFIAHI1 </span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncFIAHI1, IncFIAHI1)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 3
