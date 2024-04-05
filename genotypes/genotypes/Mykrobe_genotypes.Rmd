@@ -1,0 +1,46 @@
+---
+title: "Typhoid Genomics Consortium - Mykrobe - Genotype"
+author: "Danielle Ingle, Kat Holt"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  prettydoc::html_pretty:
+    theme: cayman
+    toc: true
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# set working directory to the location of the script
+knitr::opts_knit$set(root.dir = getwd())
+setwd(dirname(rstudioapi::getSourceEditorContext()$path))
+
+# load packages
+library(knitr)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(ComplexUpset)
+library(patchwork)
+```
+
+# print session info (package versions)
+```{r session_info}
+
+# print versions
+sessionInfo()
+
+```
+
+
+```{r files}
+
+#ONT and Illuminia calls
+gt <- read_csv("Supplementary_Table_1.csv")
+
+```
+
+
