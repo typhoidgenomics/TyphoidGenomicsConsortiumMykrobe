@@ -21,10 +21,7 @@ setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 library(knitr)
 library(tidyverse)
 library(dplyr)
-library(ggplot2)
-library(scales)
-library(ComplexUpset)
-library(patchwork)
+
 ```
 
 # print session info (package versions)
@@ -39,8 +36,86 @@ sessionInfo()
 ```{r files}
 
 #ONT and Illuminia calls
-ont <- read_csv("Supplementary_Table_5.csv")
+ont <- read_csv("Supplementary_Table_6.csv")
 
 ```
 
+#species call
+```{r}
 
+ont %>% group_by(ONT_species,species)  %>% count()
+
+#filter to those that are Typhi in both read sets
+ont.typhi <- ont %>% filter(ONT_species == "typhi") %>% filter(species == "typhi")
+
+```
+
+# numbers for text - AMR
+```{r}
+#ceftriaxone
+ont.typhi %>% select(ONT_ceftriaxone, ceftriaxone)  %>% group_by(pick(everything())) %>% count()
+
+#azithromycin
+ont.typhi %>% select(ONT_azithromycin, azithromycin)  %>% group_by(pick(everything())) %>% count()
+
+#ciprofloxacin
+ont.typhi %>% select(ONT_ciprofloxacin, ciprofloxacin)  %>% group_by(pick(everything())) %>% count()
+
+#ampicillin
+ont.typhi %>% select(ONT_ampicillin, ampicillin)  %>% group_by(pick(everything())) %>% count()
+
+#chloramphenicol
+ont.typhi %>% select(ONT_azithromycin, azithromycin)  %>% group_by(pick(everything())) %>% count()
+
+#tetracycline
+ont.typhi %>% select(ONT_tetracycline, tetracycline)  %>% group_by(pick(everything())) %>% count()
+
+#trimethoprim-sulfamethoxazole
+ont.typhi %>% select(`ONT_trimethoprim-sulfamethoxazole`, `trimethoprim-sulfamethoxazole`)  %>% group_by(pick(everything())) %>% count()
+
+
+```
+
+#numbers for text - plasmid replicons
+```{r}
+
+#IncFIAHI1 
+ont.typhi %>% select(ONT_IncFIAHI1, IncFIAHI1)  %>% group_by(pick(everything())) %>% count()
+
+#IncHI1A
+ont.typhi %>% select(ONT_IncHI1A, IncHI1A)  %>% group_by(pick(everything())) %>% count()
+
+#ONT_IncHI1BR27
+ont.typhi %>% select(ONT_IncHI1BR27, IncHI1BR27)  %>% group_by(pick(everything())) %>% count()
+
+#ONT_IncHI1_ST6 
+ont.typhi %>% select(ONT_IncHI1_ST6, IncHI1_ST6)  %>% group_by(pick(everything())) %>% count()
+
+#IncY
+ont.typhi %>% select(ONT_IncY, IncY)  %>% group_by(pick(everything())) %>% count()
+
+#IncX3
+ont.typhi %>% select(ONT_IncX3, IncX3)  %>% group_by(pick(everything())) %>% count()
+
+#IncHI2A 
+ont.typhi %>% select(ONT_IncHI2A, IncHI2A)  %>% group_by(pick(everything())) %>% count()
+
+#IncI1
+ont.typhi %>% select(ONT_IncI1, IncI1)  %>% group_by(pick(everything())) %>% count()
+
+#IncL_M
+ont.typhi %>% select(ONT_IncL_M, IncL_M)  %>% group_by(pick(everything())) %>% count()
+
+#IncFIB_pHCM2
+ont.typhi %>% select(ONT_IncFIB_pHCM2, IncFIB_pHCM2)  %>% group_by(pick(everything())) %>% count()
+
+#IncFIB_K
+ont.typhi %>% select(ONT_IncFIB_K, IncFIB_K)  %>% group_by(pick(everything())) %>% count()
+
+#IncN 
+ont.typhi %>% select(ONT_IncN, IncN)  %>% group_by(pick(everything())) %>% count()
+
+#z66
+ont.typhi %>% select(ONT_z66, z66)  %>% group_by(pick(everything())) %>% count()
+
+```
