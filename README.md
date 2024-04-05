@@ -44,6 +44,7 @@ This repository holds the tabulated data and code behind the Myrkobe paper of th
 ## Plotting phylogenetic trees
 
 `/AST` directory
+* `Supplementary_Table_3.csv` = csv file of all isolates with publicly availble antimicrobial susceptibility testing (AST) data sourced from three separate datasets. Minimum inhibitory concentration (MIC) data was available from the UK Health Security Agency (UKHSA) for n=852 isolates (following EUCAST standards), and the US Centres for Disease Control and Prevention (CDC) for n=720 isolates (following CLSI standards). Disk diffusion data (following CLSI standards) was available for n=2,446 isolates collected and analysed from three countries as part of the Surveillance for Enteric Fever in Asia Project (SEAP). 
 
 * `Mykrobe_AMR_AST.Rmd` = R markdown file for all analysis, generating tables and figures
 
