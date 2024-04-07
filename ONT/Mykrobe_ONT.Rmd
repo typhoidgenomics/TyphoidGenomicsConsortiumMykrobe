@@ -48,6 +48,12 @@ ont %>% group_by(ONT_species,species)  %>% count()
 #filter to those that are Typhi in both read sets
 ont.typhi <- ont %>% filter(ONT_species == "typhi") %>% filter(species == "typhi")
 
+#depth check on the ONT data that was not Typhi
+not.typhi <- ont %>% filter(ONT_species != "typhi" | species != "typhi")
+
+not.typhi %>% group_by(ONT_species,species,depth)  %>% count()
+
+
 ```
 
 # numbers for text - AMR
