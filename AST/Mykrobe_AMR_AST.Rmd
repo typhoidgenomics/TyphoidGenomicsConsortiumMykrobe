@@ -415,11 +415,11 @@ upset_azi_SEAP
 ## Fig 5a - cef
 ``` {r}
 
-#something plotting weird with CEF with blaCTX 
 cef_dd <- amr_ast %>% 
   filter(dataset =="SEAP") %>%
   filter(!startsWith(`Ceftriaxone Measure`,"Not")) %>% 
   mutate(`No ESBL` = if_else(ceftriaxone=="S", 1, 0)) %>%
+  mutate(`blaCTX-M-15` = str_count(ceftriaxone, "blaCTX-M-15")) %>%
   mutate(cef_pheno = if_else(as.numeric(`Ceftriaxone Measure`) <=22, "I", "S")) %>%
   mutate(cef_pheno = if_else(as.numeric(`Ceftriaxone Measure`) <=19, "R", cef_pheno)) %>%
   mutate(cef_pheno=factor(cef_pheno, levels=c("S","I","R")))
