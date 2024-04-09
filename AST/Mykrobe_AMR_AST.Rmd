@@ -35,7 +35,7 @@ sessionInfo()
 ```
 
 
-# clean AST analysis
+# AST analysis
 ``` {r files}
 #include guess max to ensure col types read in correctly
 amr_ast <- read_csv("../Supplementary_Table_3.csv", guess_max = min(0, 10000))
@@ -167,57 +167,48 @@ amr_ast %>% filter(dataset=="SEAP" & `Ciprofloxacin I Result`=="S" & ciprofloxac
 
 # check discrepant calls vs PW
 ``` {r}
-# read genotype calls from Mykrobe and PW
-#need to update to Supp Table 1
-amr <- read_csv("../Mykrobe_AMRconcordance_18012024_n11992.csv")
 
-# print the dimensions of the table for reference
-dim(data)
+#read in Supplementary Table 1
+amr <- read_csv("../Supplementary_Table_1.csv")
 
-
+#CIP - Major Errors
 cip_ME <- amr_ast %>% filter(`Ciprofloxacin I Result`=="S" & ciprofloxacin!="S") %>% pull(TGC_sangerlane)
 
-amr %>% filter(TGC_sangerlane %in% cip_ME) %>% select(MYK_ciprofloxacin, starts_with("PW_gyr"), starts_with("PW_par"), starts_with("PW_qnr")) %>% view()
-
+amr %>% filter(TGC_sangerlane %in% cip_ME) %>% select(MYK_ciprofloxacin, starts_with("PW_gyr"), starts_with("PW_par"), starts_with("PW_qnr")) 
 
 cip_VME_cdc <- amr_ast %>% filter(dataset=="CDC" & `Ciprofloxacin R Result`=="R" & !startsWith(ciprofloxacin,"R")) %>% pull(TGC_sangerlane)
 
-amr %>% filter(TGC_sangerlane %in% cip_VME_cdc) %>% select(MYK_ciprofloxacin, starts_with("PW_gyr"), starts_with("PW_par"), starts_with("PW_qnr")) %>% view()
+amr %>% filter(TGC_sangerlane %in% cip_VME_cdc) %>% select(MYK_ciprofloxacin, starts_with("PW_gyr"), starts_with("PW_par"), starts_with("PW_qnr")) 
 
+#SXT  - Major Errors
+sxt_ME_cdc <- amr_ast %>% filter(dataset=="CDC" & `SXT Result`=="R" & `trimethoprim-sulfamethoxazole`=="S") %>% pull(TGC_sangerlane)
 
-sxt_ME_cdc <- amr_ast %>% filter(dataset=="CDC" & `SXT Result`=="R" & sulfamethoxazole=="S") %>% pull(TGC_sangerlane)
+amr %>% filter(TGC_sangerlane %in% sxt_ME_cdc) %>% select(`MYK_trimethoprim-sulfamethoxazole`, starts_with("PW_dfr"), starts_with("PW_sul"))
 
-amr %>% filter(TGC_sangerlane %in% sxt_ME_cdc) %>% select(MYK_sulfamethoxazole, starts_with("PW_dfr"), starts_with("PW_sul")) %>% view()
+sxt_ME_uk <- amr_ast %>% filter(dataset=="UKHSA" & `SXT Result`=="R" & `trimethoprim-sulfamethoxazole`=="S") %>% pull(TGC_sangerlane)
 
-sxt_ME_uk <- amr_ast %>% filter(dataset=="UKHSA" & `SXT Result`=="R" & sulfamethoxazole=="S") %>% pull(TGC_sangerlane)
+amr %>% filter(TGC_sangerlane %in% sxt_ME_uk) %>% select(MYK_sulfonamides, MYK_trimethoprim, `MYK_trimethoprim-sulfamethoxazole`, starts_with("PW_dfr"), starts_with("PW_sul")) 
 
-amr %>% filter(TGC_sangerlane %in% sxt_ME_uk) %>% select(MYK_sulfonamides, MYK_trimethoprim, MYK_sulfamethoxazole, starts_with("PW_dfr"), starts_with("PW_sul")) %>% view()
-
-amr %>% filter(TGC_sangerlane %in% sxt_ME_uk) %>% pull(PW_displayname)
-
-
-
+#AZI  - Very Major Errors
 azi_VME_seap <- amr_ast %>% filter(dataset=="SEAP" & `Azithromycin Result`=="R" & !startsWith(azithromycin,"R")) %>% pull(TGC_sangerlane)
 
 amr %>% filter(TGC_sangerlane %in% azi_VME_seap) %>% select(starts_with("PW_acr")) %>% colSums()
 
-
+#CEF - Very Major Errors
 cef_VME_seap <- amr_ast %>% filter(dataset=="SEAP" & `Ceftriaxone Result`=="R" & !startsWith(ceftriaxone,"R")) %>% pull(TGC_sangerlane)
 
 amr %>% filter(TGC_sangerlane %in% cef_VME_seap) %>% select(starts_with("PW_bla")) %>% colSums()
 
-
-
+#CIP - Very Major Errors
 cipR_VME_seap <- amr_ast %>% filter(dataset=="SEAP" & `Ciprofloxacin R Result`=="R" & !startsWith(ciprofloxacin,"R")) %>% pull(TGC_sangerlane)
 
 amr %>% filter(TGC_sangerlane %in% cipR_VME_seap) %>% select(starts_with("PW_gyr"), starts_with("PW_par"), starts_with("PW_qnr")) %>% colSums()
 
 amr %>% filter(TGC_sangerlane %in% cipR_VME_seap) %>% group_by(PW_cip_pred_pheno) %>% count()
 
-amr %>% filter(TGC_sangerlane %in% cipR_VME_seap) %>% filter(PW_cip_pred_pheno=="CipR") %>% select(MYK_ciprofloxacin, TGC_sangerlane, PW_displayname, `Data Accession`, starts_with("PW_gyr"), starts_with("PW_par"), starts_with("PW_qnr"))
+amr %>% filter(TGC_sangerlane %in% cipR_VME_seap) %>% filter(PW_cip_pred_pheno=="CipR") %>% select(MYK_ciprofloxacin, TGC_sangerlane, PW_displayname, `Data Accession`, starts_with("PW_gyr"), starts_with("PW_par"), starts_with("PW_qnr")) 
 
-
-
+#CIP - Very Major Errors
 cipI_VME_seap <- amr_ast %>% filter(dataset=="SEAP" & `Ciprofloxacin I Result`=="R" & ciprofloxacin=="S") %>% pull(TGC_sangerlane)
 
 amr %>% filter(TGC_sangerlane %in% cipI_VME_seap) %>% select(starts_with("PW_gyr"), starts_with("PW_par"), starts_with("PW_qnr")) %>% colSums()
@@ -352,8 +343,8 @@ upset_cip_mic_CDC <- cip_mic %>%
 ``` {r}
 upset_cip_mic_UK | upset_cip_mic_CDC
 
-ggsave("Fig4_Cip_MIC.pdf", width=9, height=5)
-ggsave("Fig4_CIP_MIC.png", width=9, height=5, units="in")
+ggsave("Figure4_Cip_MIC.pdf", width=9, height=5)
+ggsave("Figure4_CIP_MIC.png", width=9, height=5, units="in")
 ```
 
 
@@ -536,6 +527,6 @@ upset_cip_SEAP
 ``` {r}
 (upset_azi_SEAP | upset_cef_SEAP | upset_cip_SEAP) + plot_layout(widths=c(1,1,3))
 
-ggsave("Fig5_SEAP_AST.pdf", width=9, height=5)
-ggsave("Fig5_SEAP_AST.png", width=9, height=5, units="in")
+ggsave("Figure5_SEAP_AST.pdf", width=9, height=5)
+ggsave("Figure5_SEAP_AST.png", width=9, height=5, units="in")
 ```
