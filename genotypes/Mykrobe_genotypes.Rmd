@@ -1,0 +1,66 @@
+---
+title: "Typhoid Genomics Consortium - Mykrobe - Genotype"
+author: "Danielle Ingle, Kat Holt"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  prettydoc::html_pretty:
+    theme: cayman
+    toc: true
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# set working directory to the location of the script
+knitr::opts_knit$set(root.dir = getwd())
+setwd(dirname(rstudioapi::getSourceEditorContext()$path))
+
+# load packages
+library(knitr)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+
+```
+
+# print session info (package versions)
+```{r session_info}
+
+# print versions
+sessionInfo()
+
+```
+
+
+```{r files}
+
+gt <- read_csv("../Supplementary_Table_1.csv")
+
+```
+# typhi calls
+```{r}
+gt %>% group_by(MYK_species)  %>% count()
+
+#filter to 12,834 with Typhi call
+typhi <- gt %>% filter(MYK_species == "typhi")
+```
+
+#concordance between original implementation and Mykrobe
+```{r}
+
+typhi %>% replace_na(list(MYK_confidence = "none")) %>% select(BAM_Final_call, MYK_genotype, BAM_Final_call_support, MYK_confidence) %>% group_by(pick(everything())) %>% count()
+
+#exact
+exact <- typhi %>% filter(BAM_Final_call == MYK_genotype) 
+paste("Number of exact matches = ",nrow(exact), " (", round(nrow(exact)/12834*100,2),"%)", sep = "" )
+
+#discord
+discord <- typhi %>% filter(BAM_Final_call != MYK_genotype) 
+discord  %>% select(BAM_Final_call, MYK_genotype, BAM_Final_call_support, MYK_confidence) %>% group_by(pick(everything())) %>% count()
+
+```
+
+
+
