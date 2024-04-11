@@ -130,7 +130,7 @@ a.sourceLine {
 <section class="page-header">
 <h1 class="title toc-ignore project-name">Typhoid Genomics Consortium - Mykrobe - Genotype</h1>
 <h4 class="author project-author">Danielle Ingle, Kat Holt</h4>
-<h4 class="date project-date">11 April, 2024</h4>
+<h4 class="date project-date">12 April, 2024</h4>
 </section>
 
 
@@ -138,6 +138,7 @@ a.sourceLine {
 <div class="toc-box">
 <ul>
 <li><a href="#print-session-info-package-versions">print session info (package versions)</a></li>
+<li><a href="#files">files</a></li>
 <li><a href="#typhi-calls">typhi calls</a></li>
 </ul>
 </div>
@@ -182,12 +183,42 @@ a.sourceLine {
 ## [45] ellipsis_0.3.2   xml2_1.3.2       reprex_2.0.0     lubridate_1.7.10
 ## [49] assertthat_0.2.1 rmarkdown_2.9    httr_1.4.2       rstudioapi_0.13 
 ## [53] R6_2.5.0         compiler_4.1.0</code></pre>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>gt <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;../Supplementary_Table_1.csv&quot;</span>)</span></code></pre></div>
+</div>
+<div id="files" class="section level1">
+<h1>files</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>myk_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;../Supplementary_Table_1.csv&quot;</span>)</span></code></pre></div>
 <pre><code>## 
 ## ── Column specification ────────────────────────────────────────────────────────
 ## cols(
 ##   .default = col_double(),
 ##   Sanger_ID = col_character(),
+##   genome = col_character(),
+##   species = col_character(),
+##   genotype = col_character(),
+##   confidence = col_character(),
+##   `lowest support for genotype marker` = col_character(),
+##   `poorly supported markers` = col_character(),
+##   `max support for additional markers` = col_character(),
+##   `additional markers` = col_character(),
+##   `node support` = col_character(),
+##   ampicillin = col_character(),
+##   azithromycin = col_character(),
+##   ceftriaxone = col_character(),
+##   ciprofloxacin = col_character(),
+##   chloramphenicol = col_character(),
+##   `trimethoprim-sulfamethoxazole` = col_character(),
+##   sulfonamides = col_character(),
+##   trimethoprim = col_character(),
+##   tetracycline = col_character()
+## )
+## ℹ Use `spec()` for the full column specifications.</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>valid_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;../Supplementary_Table_2.csv&quot;</span>)</span></code></pre></div>
+<pre><code>## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   .default = col_double(),
+##   Sanger_ID = col_character(),
+##   TGC_sangerlane = col_character(),
 ##   `Data Accession` = col_character(),
 ##   `Study Accession` = col_character(),
 ##   `Sample Accession` = col_character(),
@@ -195,85 +226,86 @@ a.sourceLine {
 ##   Country = col_character(),
 ##   exclude_assembly = col_logical(),
 ##   exclude_hetSNVs = col_logical(),
-##   TGC_sangerlane = col_character(),
 ##   PW_displayname = col_character(),
+##   BAM_File = col_character(),
 ##   BAM_Final_call = col_character(),
 ##   BAM_Subclade = col_character(),
 ##   `BAM_AMR mutations` = col_character(),
-##   MYK_genome = col_character(),
-##   MYK_species = col_character(),
-##   MYK_genotype = col_character(),
-##   MYK_confidence = col_character(),
-##   `MYK_lowest support for genotype marker` = col_character(),
-##   `MYK_poorly supported markers` = col_character(),
-##   `MYK_max support for additional markers` = col_character()
-##   # ... with 29 more columns
+##   PW_dcs_mechanisms = col_character(),
+##   PW_azith_pred_pheno = col_character(),
+##   PW_cip_pred_pheno = col_character(),
+##   PW_cip_pheno_qrdr_gene = col_character(),
+##   PW_dcs_category = col_character(),
+##   PW_REFERENCE = col_character()
+##   # ... with 14 more columns
 ## )
 ## ℹ Use `spec()` for the full column specifications.</code></pre>
-<pre><code>## Warning: 5 parsing failures.
+<pre><code>## Warning: 11 parsing failures.
 ##   row                      col               expected         actual                           file
-##  3796 BAM_Support_PrimaryClade no trailing characters 0.49,0.46,0.43 &#39;../Supplementary_Table_1.csv&#39;
-##  6582 BAM_Support_PrimaryClade no trailing characters 0.9,0.12       &#39;../Supplementary_Table_1.csv&#39;
-##  7741 BAM_Support_PrimaryClade no trailing characters 0.5,0.44       &#39;../Supplementary_Table_1.csv&#39;
-##  9818 BAM_Support_PrimaryClade no trailing characters 0.39,0.52      &#39;../Supplementary_Table_1.csv&#39;
-## 10099 BAM_Support_PrimaryClade no trailing characters 0.64,0.44      &#39;../Supplementary_Table_1.csv&#39;</code></pre>
+##  3796 BAM_Support_PrimaryClade no trailing characters 0.49,0.46,0.43 &#39;../Supplementary_Table_2.csv&#39;
+##  6582 BAM_Support_PrimaryClade no trailing characters 0.9,0.12       &#39;../Supplementary_Table_2.csv&#39;
+##  7741 BAM_Support_PrimaryClade no trailing characters 0.5,0.44       &#39;../Supplementary_Table_2.csv&#39;
+##  9818 BAM_Support_PrimaryClade no trailing characters 0.39,0.52      &#39;../Supplementary_Table_2.csv&#39;
+## 10099 BAM_Support_PrimaryClade no trailing characters 0.64,0.44      &#39;../Supplementary_Table_2.csv&#39;
+## ..... ........................ ...................... .............. ..............................
+## See problems(...) for more details.</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>gt <span class="ot">&lt;-</span> myk_data <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(valid_data, <span class="at">by =</span> <span class="st">&quot;Sanger_ID&quot;</span>)</span></code></pre></div>
 </div>
 <div id="typhi-calls" class="section level1">
 <h1>typhi calls</h1>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>gt <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(MYK_species)  <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#species call from Mykrobe</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>gt <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(species)  <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 2
-## # Groups:   MYK_species [2]
-##   MYK_species     n
-##   &lt;chr&gt;       &lt;int&gt;
-## 1 not typhi       5
-## 2 typhi       12834</code></pre>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#filter to 12,834 with Typhi call</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>typhi <span class="ot">&lt;-</span> gt <span class="sc">%&gt;%</span> <span class="fu">filter</span>(MYK_species <span class="sc">==</span> <span class="st">&quot;typhi&quot;</span>)</span></code></pre></div>
+## # Groups:   species [2]
+##   species       n
+##   &lt;chr&gt;     &lt;int&gt;
+## 1 not typhi     5
+## 2 typhi     12834</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#filter to 12,834 with Typhi call</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>typhi <span class="ot">&lt;-</span> gt <span class="sc">%&gt;%</span> <span class="fu">filter</span>(species <span class="sc">==</span> <span class="st">&quot;typhi&quot;</span>)</span></code></pre></div>
 <p>#concordance between original implementation and Mykrobe</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>typhi <span class="sc">%&gt;%</span> <span class="fu">replace_na</span>(<span class="fu">list</span>(<span class="at">MYK_confidence =</span> <span class="st">&quot;none&quot;</span>)) <span class="sc">%&gt;%</span> <span class="fu">select</span>(BAM_Final_call, MYK_genotype, BAM_Final_call_support, MYK_confidence) <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>typhi <span class="sc">%&gt;%</span> <span class="fu">replace_na</span>(<span class="fu">list</span>(<span class="at">confidence =</span> <span class="st">&quot;none&quot;</span>)) <span class="sc">%&gt;%</span> <span class="fu">select</span>(BAM_Final_call, genotype, BAM_Final_call_support, confidence) <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 366 × 5
-## # Groups:   BAM_Final_call, MYK_genotype, BAM_Final_call_support,
-## #   MYK_confidence [366]
-##    BAM_Final_call MYK_genotype BAM_Final_call_support MYK_confidence     n
-##    &lt;chr&gt;          &lt;chr&gt;                         &lt;dbl&gt; &lt;chr&gt;          &lt;int&gt;
-##  1 0              0                              1    none               4
-##  2 0.0.1          0.0.1                          0.98 strong             1
-##  3 0.0.1          0.0.1                          1    strong             5
-##  4 0.0.2          0.0.2                          0.99 strong             2
-##  5 0.0.2          0.0.2                          1    strong             7
-##  6 0.0.3          0.0.3                          0.99 strong             2
-##  7 0.0.3          0.0.3                          1    strong            43
-##  8 0.1            0.1                            0.97 strong             1
-##  9 0.1            0.1                            0.98 strong             2
-## 10 0.1            0.1                            1    strong            10
+## # Groups:   BAM_Final_call, genotype, BAM_Final_call_support, confidence [366]
+##    BAM_Final_call genotype BAM_Final_call_support confidence     n
+##    &lt;chr&gt;          &lt;chr&gt;                     &lt;dbl&gt; &lt;chr&gt;      &lt;int&gt;
+##  1 0              0                          1    none           4
+##  2 0.0.1          0.0.1                      0.98 strong         1
+##  3 0.0.1          0.0.1                      1    strong         5
+##  4 0.0.2          0.0.2                      0.99 strong         2
+##  5 0.0.2          0.0.2                      1    strong         7
+##  6 0.0.3          0.0.3                      0.99 strong         2
+##  7 0.0.3          0.0.3                      1    strong        43
+##  8 0.1            0.1                        0.97 strong         1
+##  9 0.1            0.1                        0.98 strong         2
+## 10 0.1            0.1                        1    strong        10
 ## # ℹ 356 more rows</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#exact</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>exact <span class="ot">&lt;-</span> typhi <span class="sc">%&gt;%</span> <span class="fu">filter</span>(BAM_Final_call <span class="sc">==</span> MYK_genotype) </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">&quot;Number of exact matches = &quot;</span>,<span class="fu">nrow</span>(exact), <span class="st">&quot; (&quot;</span>, <span class="fu">round</span>(<span class="fu">nrow</span>(exact)<span class="sc">/</span><span class="dv">12834</span><span class="sc">*</span><span class="dv">100</span>,<span class="dv">2</span>),<span class="st">&quot;%)&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span> )</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#exact</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>exact <span class="ot">&lt;-</span> typhi <span class="sc">%&gt;%</span> <span class="fu">filter</span>(BAM_Final_call <span class="sc">==</span> genotype) </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">&quot;Number of exact matches = &quot;</span>,<span class="fu">nrow</span>(exact), <span class="st">&quot; (&quot;</span>, <span class="fu">round</span>(<span class="fu">nrow</span>(exact)<span class="sc">/</span><span class="dv">12834</span><span class="sc">*</span><span class="dv">100</span>,<span class="dv">2</span>),<span class="st">&quot;%)&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span> )</span></code></pre></div>
 <pre><code>## [1] &quot;Number of exact matches = 12807 (99.79%)&quot;</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#discord</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>discord <span class="ot">&lt;-</span> typhi <span class="sc">%&gt;%</span> <span class="fu">filter</span>(BAM_Final_call <span class="sc">!=</span> MYK_genotype) </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>discord  <span class="sc">%&gt;%</span> <span class="fu">select</span>(BAM_Final_call, MYK_genotype, BAM_Final_call_support, MYK_confidence) <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#discord</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>discord <span class="ot">&lt;-</span> typhi <span class="sc">%&gt;%</span> <span class="fu">filter</span>(BAM_Final_call <span class="sc">!=</span> genotype) </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>discord  <span class="sc">%&gt;%</span> <span class="fu">select</span>(BAM_Final_call, genotype, BAM_Final_call_support, confidence) <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 15 × 5
-## # Groups:   BAM_Final_call, MYK_genotype, BAM_Final_call_support,
-## #   MYK_confidence [15]
-##    BAM_Final_call       MYK_genotype BAM_Final_call_support MYK_confidence     n
-##    &lt;chr&gt;                &lt;chr&gt;                         &lt;dbl&gt; &lt;chr&gt;          &lt;int&gt;
-##  1 0.1.3                2                              1    strong             1
-##  2 2.2.3,2.2.2          2.2.3                          0.93 strong             1
-##  3 2.2.3,2.2.2          2.2.3                          0.99 strong             2
-##  4 2.2.3,2.2.2          2.2.3                          1    strong             3
-##  5 3.5.4                3.5.3                          0.98 strong             1
-##  6 3.5.4                3.5.3                          1    strong             7
-##  7 4.3.1.1,2.1.2        4.3.1.1                        0.98 strong             1
-##  8 4.3.1.1,2.1.2        4.3.1.1                        1    strong             4
-##  9 4.3.1.1,2.2.2        4.3.1.1                        0.03 weak               1
-## 10 4.3.1.1,4.3.1.2      4.3.1.2                        0.14 weak               1
-## 11 4.3.1.1,4.3.1.2      4.3.1.2                        0.27 moderate           1
-## 12 4.3.1.1,4.3.1.2.1    4.3.1.2.1                      0.03 weak               1
-## 13 4.3.1.1,4.3.1.2.1,1… 4.3.1.2.1                      0    weak               1
-## 14 4.3.1.1,4.3.1.3.Bdq  4.3.1.1                        0.11 strong             1
-## 15 4.3.1.3,4.3.1.1      4.3.1.3                        0.2  weak               1</code></pre>
+## # Groups:   BAM_Final_call, genotype, BAM_Final_call_support, confidence [15]
+##    BAM_Final_call          genotype  BAM_Final_call_support confidence     n
+##    &lt;chr&gt;                   &lt;chr&gt;                      &lt;dbl&gt; &lt;chr&gt;      &lt;int&gt;
+##  1 0.1.3                   2                           1    strong         1
+##  2 2.2.3,2.2.2             2.2.3                       0.93 strong         1
+##  3 2.2.3,2.2.2             2.2.3                       0.99 strong         2
+##  4 2.2.3,2.2.2             2.2.3                       1    strong         3
+##  5 3.5.4                   3.5.3                       0.98 strong         1
+##  6 3.5.4                   3.5.3                       1    strong         7
+##  7 4.3.1.1,2.1.2           4.3.1.1                     0.98 strong         1
+##  8 4.3.1.1,2.1.2           4.3.1.1                     1    strong         4
+##  9 4.3.1.1,2.2.2           4.3.1.1                     0.03 weak           1
+## 10 4.3.1.1,4.3.1.2         4.3.1.2                     0.14 weak           1
+## 11 4.3.1.1,4.3.1.2         4.3.1.2                     0.27 moderate       1
+## 12 4.3.1.1,4.3.1.2.1       4.3.1.2.1                   0.03 weak           1
+## 13 4.3.1.1,4.3.1.2.1,1.2.1 4.3.1.2.1                   0    weak           1
+## 14 4.3.1.1,4.3.1.3.Bdq     4.3.1.1                     0.11 strong         1
+## 15 4.3.1.3,4.3.1.1         4.3.1.3                     0.2  weak           1</code></pre>
 </div>
 </section>
 

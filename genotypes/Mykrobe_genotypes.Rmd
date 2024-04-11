@@ -33,32 +33,34 @@ sessionInfo()
 
 ```
 
+# files
+```{r}
+myk_data <- read_csv("../Supplementary_Table_1.csv")
+valid_data <- read_csv("../Supplementary_Table_2.csv")
 
-```{r files}
-
-gt <- read_csv("../Supplementary_Table_1.csv")
-
+gt <- myk_data %>% left_join(valid_data, by = "Sanger_ID")
 ```
 # typhi calls
 ```{r}
-gt %>% group_by(MYK_species)  %>% count()
+#species call from Mykrobe
+gt %>% group_by(species)  %>% count()
 
 #filter to 12,834 with Typhi call
-typhi <- gt %>% filter(MYK_species == "typhi")
+typhi <- gt %>% filter(species == "typhi")
 ```
 
 #concordance between original implementation and Mykrobe
 ```{r}
 
-typhi %>% replace_na(list(MYK_confidence = "none")) %>% select(BAM_Final_call, MYK_genotype, BAM_Final_call_support, MYK_confidence) %>% group_by(pick(everything())) %>% count()
+typhi %>% replace_na(list(confidence = "none")) %>% select(BAM_Final_call, genotype, BAM_Final_call_support, confidence) %>% group_by(pick(everything())) %>% count()
 
 #exact
-exact <- typhi %>% filter(BAM_Final_call == MYK_genotype) 
+exact <- typhi %>% filter(BAM_Final_call == genotype) 
 paste("Number of exact matches = ",nrow(exact), " (", round(nrow(exact)/12834*100,2),"%)", sep = "" )
 
 #discord
-discord <- typhi %>% filter(BAM_Final_call != MYK_genotype) 
-discord  %>% select(BAM_Final_call, MYK_genotype, BAM_Final_call_support, MYK_confidence) %>% group_by(pick(everything())) %>% count()
+discord <- typhi %>% filter(BAM_Final_call != genotype) 
+discord  %>% select(BAM_Final_call, genotype, BAM_Final_call_support, confidence) %>% group_by(pick(everything())) %>% count()
 
 ```
 

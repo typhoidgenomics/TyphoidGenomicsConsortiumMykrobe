@@ -36,7 +36,7 @@ sessionInfo()
 ```{r files}
 
 #ONT and Illuminia calls
-ont <- read_csv("Supplementary_Table_5.csv")
+ont <- read_csv("Supplementary_Table_6.csv")
 
 ```
 

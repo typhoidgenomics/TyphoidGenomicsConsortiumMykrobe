@@ -35,7 +35,11 @@ sessionInfo()
 # read genotype calls from Mykrobe and PW
 ``` {r read_data}
 # read as a tibble
-amr <- read_csv("../Supplementary_Table_1.csv")
+myk_data <- read_csv("../Supplementary_Table_1.csv")
+valid_data <- read_csv("../Supplementary_Table_2.csv")
+
+colnames(myk_data)[2:75] <- paste("MYK", colnames(myk_data)[2:75], sep = "_")
+amr <- myk_data %>% left_join(valid_data, by = "Sanger_ID")
 
 #filter to where have calls for both Mykrobe and PW 
 amr <- amr %>% filter(MYK_species == "typhi")  %>% filter(`PW_Species Name` == "Salmonella enterica")
@@ -303,7 +307,7 @@ amr %>% filter(grepl('IncL', `PW_Inc Types`) |
   group_by(`PW_Inc Types`) %>% count()
 
 # only plasmid rep with n>1 is p0111 (n=118) but this is not associated with AMR genes (most p0111+ strains do not carry any acquired AMR genes)
-#updated in Mykrobe
+#updated in Mykrobe. 
 amr %>% filter(grepl('p0111', `PW_Inc Types`)) 
 amr %>% filter(grepl('IncX1', `PW_Inc Types`)) 
 

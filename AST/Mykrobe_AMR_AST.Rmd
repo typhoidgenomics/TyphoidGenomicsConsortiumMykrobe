@@ -38,7 +38,7 @@ sessionInfo()
 # AST analysis
 ``` {r files}
 #include guess max to ensure col types read in correctly
-amr_ast <- read_csv("../Supplementary_Table_3.csv", guess_max = min(0, 10000))
+amr_ast <- read_csv("../Supplementary_Table_4.csv", guess_max = min(0, 10000))
 ```
 
 # make long form
@@ -91,7 +91,7 @@ ast_comparison <- amr_ast_long %>%
 
 # write full details as supp table
 ``` {r}
-write_csv(file="Supplementary_Table_4.csv",
+write_csv(file="Supplementary_Table_5.csv",
           ast_comparison %>% 
             rename(Dataset=dataset) %>% 
             mutate(R_percent=paste0(round(R_percent*100,2),"%")) %>%
@@ -168,8 +168,12 @@ amr_ast %>% filter(dataset=="SEAP" & `Ciprofloxacin I Result`=="S" & ciprofloxac
 # check discrepant calls vs PW
 ``` {r}
 
-#read in Supplementary Table 1
-amr <- read_csv("../Supplementary_Table_1.csv")
+#read in Supplementary Table 1 and Supplementary Table 2
+myk_data <- read_csv("../Supplementary_Table_1.csv")
+valid_data <- read_csv("../Supplementary_Table_2.csv")
+
+colnames(myk_data)[2:75] <- paste("MYK", colnames(myk_data)[2:75], sep = "_")
+amr <- myk_data %>% left_join(valid_data, by = "Sanger_ID")
 
 #CIP - Major Errors
 cip_ME <- amr_ast %>% filter(`Ciprofloxacin I Result`=="S" & ciprofloxacin!="S") %>% pull(TGC_sangerlane)
