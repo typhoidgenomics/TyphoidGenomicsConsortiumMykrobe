@@ -1,5 +1,5 @@
 ---
-title: "Typhoid Genomics Consortium - Mykrobe - Genotype"
+title: "GTGC - Mykrobe - Genotype validation"
 author: "Danielle Ingle, Kat Holt"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
@@ -38,8 +38,9 @@ sessionInfo()
 myk_data <- read_csv("../Supplementary_Table_1.csv")
 valid_data <- read_csv("../Supplementary_Table_2.csv")
 
-gt <- myk_data %>% left_join(valid_data, by = "Sanger_ID")
+gt <- myk_data %>% left_join(valid_data, by = "TGC_ID")
 ```
+
 # typhi calls
 ```{r}
 #species call from Mykrobe
@@ -49,13 +50,12 @@ gt %>% group_by(species)  %>% count()
 typhi <- gt %>% filter(species == "typhi")
 ```
 
-#concordance between original implementation and Mykrobe
+# concordance between original mapping-based implementation and Mykrobe
 ```{r}
-
-typhi %>% replace_na(list(confidence = "none")) %>% select(BAM_Final_call, genotype, BAM_Final_call_support, confidence) %>% group_by(pick(everything())) %>% count()
 
 #exact
 exact <- typhi %>% filter(BAM_Final_call == genotype) 
+
 paste("Number of exact matches = ",nrow(exact), " (", round(nrow(exact)/12834*100,2),"%)", sep = "" )
 
 #discord
@@ -63,6 +63,3 @@ discord <- typhi %>% filter(BAM_Final_call != genotype)
 discord  %>% select(BAM_Final_call, genotype, BAM_Final_call_support, confidence) %>% group_by(pick(everything())) %>% count()
 
 ```
-
-
-
