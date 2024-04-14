@@ -1,5 +1,5 @@
 ---
-title: "Typhoid Genomics Consortium - Mykrobe - AMR plasmid"
+title: "Global Typhoid Genomics Consortium - Mykrobe - AMR and plasmid typing validation"
 author: "Danielle Ingle, Kat Holt"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
@@ -39,22 +39,22 @@ myk_data <- read_csv("../Supplementary_Table_1.csv")
 valid_data <- read_csv("../Supplementary_Table_2.csv")
 
 colnames(myk_data)[2:75] <- paste("MYK", colnames(myk_data)[2:75], sep = "_")
-amr <- myk_data %>% left_join(valid_data, by = "Sanger_ID")
+amr <- myk_data %>% left_join(valid_data, by = "TGC_ID")
 
 #filter to where have calls for both Mykrobe and PW 
 amr <- amr %>% filter(MYK_species == "typhi")  %>% filter(`PW_Species Name` == "Salmonella enterica")
 ```
 
 # compare ESBL calls
-``` {r }
-# which ESBLs did Mykrobe pick call? CTX-M-15, SHV-12
+``` {r esbl}
+# which ESBLs did Mykrobe call? CTX-M-15, SHV-12
 amr %>% select(c(`MYK_blaCTX-M-15`, `MYK_blaSHV-12`, `MYK_blaOXA-134`, `MYK_AmpC1`)) %>% group_by(pick(everything())) %>% count()
 
 amr %>% select(c(`MYK_blaCTX-M-15`,starts_with("PW_blaCTX")))  %>% group_by(pick(everything())) %>% count()
 
 amr %>% select(c(`MYK_blaSHV-12`,starts_with("PW_blaSHV")))  %>% group_by(pick(everything())) %>% count()
 
-# OXAs not detected by Mykrobe, but 1 detected by PW
+# OXAs not detected by Mykrobe, but 1 (ampR, not ESBL) detected by PW
 amr %>% select(c(starts_with("MYK_blaOXA"),starts_with("PW_blaOXA")))  %>% group_by(pick(everything())) %>% count()
 
 # no AmpC detected by either
@@ -63,32 +63,34 @@ amr %>% select(c(`MYK_AmpC1`,starts_with("PW_amp")))  %>% group_by(pick(everythi
 ```
 
 # compare ampicillin calls
-``` {r }
+``` {r amp}
 # check TEM calls
 amr %>% select(`MYK_blaTEM-1D`, `PW_blaTEM-1D` ) %>% group_by(pick(everything())) %>% count()
 
-````
+# OXAs not detected by Mykrobe, but 1 (ampR, not ESBL) detected by PW
+amr %>% select(c(starts_with("MYK_blaOXA"),starts_with("PW_blaOXA")))  %>% group_by(pick(everything())) %>% count()
 
+```
 
 # compare azi calls
-``` {r }
+``` {r azi}
 # check acrB calls
 amr %>% select(starts_with("MYK_acr"), starts_with("PW_acrB")) %>% group_by(pick(everything())) %>% count()
 
-````
+```
 
 # compare chloramph calls
-``` {r }
+``` {r chl}
 # check cat calls - one cmlA1, agreed by both methods, in a catA1+ strain
 amr %>% select(MYK_catA1,MYK_cmlA1, PW_catA1, PW_cmlA) %>% group_by(pick(everything())) %>% count()
 
 amr %>% select(MYK_catA1, PW_catA1) %>% group_by(pick(everything())) %>% count()
 
 amr %>% select(MYK_cmlA1, PW_cmlA) %>% group_by(pick(everything())) %>% count()
-````
+```
 
 # compare cip calls
-``` {r }
+``` {r cip}
 amr %>% select(starts_with("MYK_qnr"), starts_with("MYK_gyr"), starts_with("MYK_par")) %>% colSums()
 
 amr %>% select(starts_with("MYK_qnr"), starts_with("PW_qnr")) %>% group_by(pick(everything())) %>% count()
@@ -117,12 +119,11 @@ amr %>% select(starts_with("MYK_parC_E84"), starts_with("PW_parC_E84")) %>% grou
 
 amr %>% select(starts_with("MYK_gyrB"), starts_with("PW_gyrB")) %>% group_by(pick(everything())) %>% count()
 
-
-````
+```
 
 
 # compare sul calls
-``` {r }
+``` {r sul}
 # check sul calls 
 amr %>% select(MYK_sul1, MYK_sul2, PW_sul1, PW_sul2) %>% colSums()
 
@@ -134,7 +135,7 @@ amr %>% select(MYK_sul2, PW_sul2) %>% group_by(pick(everything())) %>% count()
 
 
 # compare dfr calls
-``` {r }
+``` {r dfr}
 # check dfr calls 
 amr %>% select(starts_with("MYK_dfr")) %>% colSums()
 
@@ -148,7 +149,6 @@ table(dfr_hits_PW)
 table(dfr_hits_MYK,dfr_hits_PW)
 
 amr %>% select(starts_with("MYK_dfr"), starts_with("PW_dfr")) %>% select(-PW_dfra_any) %>% group_by(pick(everything()))
-
 
 amr %>% select(MYK_dfrA1, starts_with("PW_dfr")) %>% select(-PW_dfra_any) %>% group_by(pick(everything())) %>% count()
 
@@ -167,10 +167,10 @@ amr %>% select(MYK_dfrA18, starts_with("PW_dfr")) %>% select(-PW_dfra_any) %>% g
 # presence by PW in those with nothing detected by Mykrobe
 amr %>% filter(dfr_hits_MYK==0) %>% select(starts_with("PW_dfr")) %>% select(-PW_dfra_any) %>% group_by(pick(everything())) %>% count()
 
-````
+```
 
 # compare tet calls
-``` {r }
+``` {r}
 # check tet calls 
 amr %>% select(starts_with("MYK_tet")) %>% select(-MYK_tetracycline) %>% colSums()
 
@@ -183,7 +183,7 @@ amr %>% select(MYK_tetB, `PW_tetA(B)`) %>% group_by(pick(everything())) %>% coun
 amr %>% select(MYK_tetC, `PW_tetA(C)`) %>% group_by(pick(everything())) %>% count()
 amr %>% select(MYK_tetD, `PW_tetA(D)`) %>% group_by(pick(everything())) %>% count()
 
-````
+```
 
 # drug-level
 ``` {r}
@@ -239,7 +239,6 @@ amr %>% mutate(PW_IncHI1A=str_count(`PW_Inc Types`, "IncHI1A")) %>%
   mutate(PW_IncHI1BR27=str_count(`PW_Inc Types`, "IncHI1B\\(R27\\)")) %>%
   mutate(PW_IncHI1BR27=if_else(is.na(PW_IncHI1BR27), 0, PW_IncHI1BR27)) %>%
   group_by(MYK_IncHI1BR27, MYK_IncHI1A, PW_IncHI1BR27, PW_IncHI1A) %>% count()
-
 
 # check IncY calls 
 amr %>% mutate(PW_IncY=str_count(`PW_Inc Types`, "IncY")) %>%
@@ -307,6 +306,7 @@ amr %>% filter(grepl('IncL', `PW_Inc Types`) |
   group_by(`PW_Inc Types`) %>% count()
 
 # only plasmid rep with n>1 is p0111 (n=118) but this is not associated with AMR genes (most p0111+ strains do not carry any acquired AMR genes)
+
 #updated in Mykrobe. 
 amr %>% filter(grepl('p0111', `PW_Inc Types`)) 
 amr %>% filter(grepl('IncX1', `PW_Inc Types`)) 

@@ -1,5 +1,5 @@
 ---
-title: "Typhoid Genomics Consortium - Mykrobe - ONT"
+title: "Global Typhoid Genomics Consortium - Mykrobe - ONT comparison"
 author: "Danielle Ingle, Kat Holt"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 

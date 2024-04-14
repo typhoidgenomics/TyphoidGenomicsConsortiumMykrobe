@@ -1,5 +1,5 @@
 ---
-title: "GTGC - Mykrobe - Genotype validation"
+title: "Global Typhoid Genomics Consortium - Mykrobe - Genotype validation"
 author: "Danielle Ingle, Kat Holt"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 

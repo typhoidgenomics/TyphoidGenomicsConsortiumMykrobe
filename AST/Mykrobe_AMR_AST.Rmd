@@ -1,5 +1,5 @@
 ---
-title: "Typhoid Genomics Consortium - Mykrobe - AST"
+title: "Global Typhoid Genomics Consortium - Mykrobe - AST prediction"
 author: "Danielle Ingle, Kat Holt"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
@@ -173,7 +173,7 @@ myk_data <- read_csv("../Supplementary_Table_1.csv")
 valid_data <- read_csv("../Supplementary_Table_2.csv")
 
 colnames(myk_data)[2:75] <- paste("MYK", colnames(myk_data)[2:75], sep = "_")
-amr <- myk_data %>% left_join(valid_data, by = "Sanger_ID")
+amr <- myk_data %>% left_join(valid_data, by = "TGC_ID")
 
 #CIP - Major Errors
 cip_ME <- amr_ast %>% filter(`Ciprofloxacin I Result`=="S" & ciprofloxacin!="S") %>% pull(TGC_sangerlane)
