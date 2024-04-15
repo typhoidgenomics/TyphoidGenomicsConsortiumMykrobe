@@ -80,7 +80,7 @@ ont.typhi %>% select(ONT_ciprofloxacin, ciprofloxacin)  %>% group_by(pick(everyt
 ont.typhi %>% select(ONT_ampicillin, ampicillin)  %>% group_by(pick(everything())) %>% count()
 
 #chloramphenicol
-ont.typhi %>% select(ONT_azithromycin, azithromycin)  %>% group_by(pick(everything())) %>% count()
+ont.typhi %>% select(ONT_chloramphenicol, chloramphenicol)  %>% group_by(pick(everything())) %>% count()
 
 #tetracycline
 ont.typhi %>% select(ONT_tetracycline, tetracycline)  %>% group_by(pick(everything())) %>% count()
