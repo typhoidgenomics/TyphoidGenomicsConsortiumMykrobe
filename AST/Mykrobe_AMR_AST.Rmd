@@ -102,7 +102,7 @@ write_csv(file="Supplementary_Table_5.csv",
             )
 ```
 
-# Fig 3 - AST prediction plot
+# Fig 2 - AST prediction plot
 ``` {r}
 ast_comparison %>% 
   mutate(agreement_min=agree_p - sqrt(agree_p*(1-agree_p)/n)*1.96) %>%
@@ -129,8 +129,8 @@ ast_comparison %>%
 
 # write plot to PDF & PNG
 ``` {r}
-ggsave("Figure3_categorical_agreement.pdf", width=9, height=3)
-ggsave("Figure3_categorical_agreement.png", width=9, height=3, units="in")
+ggsave("Figure2_categorical_agreement.pdf", width=9, height=3)
+ggsave("Figure2_categorical_agreement.png", width=9, height=3, units="in")
 ```
 
 
@@ -220,7 +220,7 @@ amr %>% filter(TGC_sangerlane %in% cipI_VME_seap) %>% select(starts_with("PW_gyr
 ```
 
 
-# Fig 4 - cip upset plots, CDC/UKHSA
+# Fig 3 - cip upset plots, CDC/UKHSA
 ``` {r}
 
 cip_mic <- amr_ast %>% 
@@ -273,7 +273,7 @@ upset_cip_mic_UK <- cip_mic %>%
           geom=list(
             geom_bar(stat='count', position='fill'), 
             theme(legend.position = "none", axis.title=element_text(size=8)),
-            scale_fill_manual(values = c("#cab2d6","#fdbf6f" )),
+            scale_fill_manual(values = c("IndianRed","#c2d1f0" )),
             scale_y_continuous(labels=scales::percent_format()),
             geom_text(aes(label=..count..), stat="count", position=position_fill(vjust = .5), angle = 45, size=2))
         )
@@ -284,7 +284,7 @@ upset_cip_mic_UK <- cip_mic %>%
               geom_hline(aes(yintercept = 0.125), linetype = 1, alpha = 0.6, color = "black")  +
               geom_violin()+ 
               geom_count(aes(colour = cip_pheno))+
-              scale_color_manual(values = c("#cab2d6","#fdbf6f" ))+
+              scale_color_manual(values = c("IndianRed","#c2d1f0" ))+
               scale_y_continuous(trans = log2_trans(), breaks = c(0.0075, 0.015, 0.03, 0.06, 0.125, 0.25, 0.5, 1, 2, 4, 8, 16)) +
               theme(legend.position = "none", axis.title=element_text(size=8)) +
             ggtitle("a) UKHSA")
@@ -318,7 +318,7 @@ upset_cip_mic_CDC <- cip_mic %>%
           geom=list(
             geom_bar(stat='count', position='fill'), 
             theme(legend.position = "none", axis.title=element_text(size=8)),
-            scale_fill_manual(values = c("#fdbf6f", "#a6cee3", "#cab2d6")),
+            scale_fill_manual(values = c("#c2d1f0", "#EEBB74", "IndianRed")),
             scale_y_continuous(labels=scales::percent_format()),
             geom_text(aes(label=..count..), stat="count", position=position_fill(vjust = .5), angle = 45, size=2))
         )
@@ -330,7 +330,7 @@ upset_cip_mic_CDC <- cip_mic %>%
               geom_hline(aes(yintercept = 0.125), linetype = 2, alpha = 0.6, color = "black")  +
               geom_violin()+ 
               geom_count(aes(colour = cip_pheno))+
-              scale_color_manual(values = c("#fdbf6f", "#a6cee3", "#cab2d6"))+
+              scale_color_manual(values = c("#c2d1f0", "#EEBB74", "IndianRed"))+
               scale_y_continuous(trans = log2_trans(), breaks = c(0.0075, 0.015, 0.03, 0.06, 0.125, 0.25, 0.5, 1, 2, 4, 8, 16), limits=c(0.0075, 16)) +
               guides(size = "none") +
               labs(colour = "Phenotype") +
@@ -343,18 +343,18 @@ upset_cip_mic_CDC <- cip_mic %>%
 
 ```
 
-# write Fig4 to PDF & PNG
+# write Fig3 to PDF & PNG
 ``` {r}
 upset_cip_mic_UK | upset_cip_mic_CDC
 
-ggsave("Figure4_Cip_MIC.pdf", width=9, height=5)
-ggsave("Figure4_CIP_MIC.png", width=9, height=5, units="in")
+ggsave("Figure3_Cip_MIC.pdf", width=9, height=5)
+ggsave("Figure3_CIP_MIC.png", width=9, height=5, units="in")
 ```
 
 
-# Fig 5 - SEAP upset plots
+# Fig 4 - SEAP upset plots
 
-## Fig 5a - azi
+## Fig 4a - azi
 ``` {r}
 
 azi_dd <- amr_ast %>% 
@@ -385,7 +385,7 @@ upset_azi_SEAP <- azi_dd %>%
           geom=list(
             geom_bar(stat='count', position='fill'), 
             theme(legend.position = "none", axis.title=element_text(size=8)),
-            scale_fill_manual(values = c("#fdbf6f", "#cab2d6")),
+            scale_fill_manual(values = c("#c2d1f0", "IndianRed")),
             scale_y_continuous(labels=scales::percent_format()),
             geom_text(aes(label=..count..), stat="count", position=position_fill(vjust = .5), angle = 45, size=2))
         )
@@ -396,7 +396,7 @@ upset_azi_SEAP <- azi_dd %>%
               geom_hline(aes(yintercept = 12), linetype = 1, alpha = 0.6, color = "black")  +
               geom_violin()+ 
               geom_count(aes(colour = azi_pheno))+
-              scale_color_manual(values = c("#fdbf6f", "#cab2d6"))+
+              scale_color_manual(values = c("#c2d1f0", "IndianRed"))+
               scale_y_continuous(breaks=c(0,10,20,30,40), limits=c(0,40)) +
               theme(legend.position = "none", axis.title=element_text(size=8)) +
             ggtitle("a) Azithromycin")
@@ -407,7 +407,7 @@ upset_azi_SEAP <- azi_dd %>%
 upset_azi_SEAP
 ```
 
-## Fig 5a - cef
+## Fig 4b - cef
 ``` {r}
 
 cef_dd <- amr_ast %>% 
@@ -437,7 +437,7 @@ upset_cef_SEAP <- cef_dd %>%
           geom=list(
             geom_bar(stat='count', position='fill'), 
             theme(legend.position = "none", axis.title=element_text(size=8)),
-            scale_fill_manual(values = c("#fdbf6f", "#a6cee3", "#cab2d6")),
+            scale_fill_manual(values = c("#c2d1f0", "#EEBB74", "IndianRed")),
             scale_y_continuous(labels=scales::percent_format()),
             geom_text(aes(label=..count..), stat="count", position=position_fill(vjust = .5), angle = 45, size=2))
         )
@@ -449,7 +449,7 @@ upset_cef_SEAP <- cef_dd %>%
               geom_hline(aes(yintercept = 23), linetype = 2, alpha = 0.6, color = "black")  +
               geom_violin()+ 
               geom_count(aes(colour = cef_pheno))+
-              scale_color_manual(values = c("#fdbf6f", "#a6cee3", "#cab2d6"))+
+              scale_color_manual(values = c("#c2d1f0", "#EEBB74", "IndianRed"))+
               scale_y_continuous(breaks=c(0,10,20,30,40), limits=c(0,40)) +
               theme(legend.position = "none", axis.title=element_text(size=8)) +
             ggtitle("b) Ceftriaxone")
@@ -460,7 +460,7 @@ upset_cef_SEAP <- cef_dd %>%
 upset_cef_SEAP
 ```
 
-## Fig 5a - cipro
+## Fig 4c - cipro
 ``` {r}
 
 cip_dd <- amr_ast %>% 
@@ -503,7 +503,7 @@ upset_cip_SEAP <- cip_dd %>%
           geom=list(
             geom_bar(stat='count', position='fill'), 
             theme(legend.position = "none", axis.title=element_text(size=8)),
-            scale_fill_manual(values = c("#fdbf6f", "#a6cee3", "#cab2d6")),
+            scale_fill_manual(values = c("#c2d1f0", "#EEBB74", "IndianRed")),
             scale_y_continuous(labels=scales::percent_format()),
             geom_text(aes(label=..count..), stat="count", position=position_fill(vjust = .5), angle = 45, size=2))
         )
@@ -515,7 +515,7 @@ upset_cip_SEAP <- cip_dd %>%
               geom_hline(aes(yintercept = 30), linetype = 2, alpha = 0.6, color = "black")  +
               geom_violin()+ 
               geom_count(aes(colour = cip_pheno))+
-              scale_color_manual(values = c("#fdbf6f", "#a6cee3", "#cab2d6"))+
+              scale_color_manual(values = c("#c2d1f0", "#EEBB74", "IndianRed"))+
               scale_y_continuous(breaks=c(0,10,20,30,40), limits=c(0,40)) +
               guides(size = "none") +
               labs(colour = "Phenotype") +
@@ -527,10 +527,10 @@ upset_cip_SEAP <- cip_dd %>%
 
 upset_cip_SEAP
 ```
-# write Fig5 to PDF & PNG
+# write Fig4 to PDF & PNG
 ``` {r}
 (upset_azi_SEAP | upset_cef_SEAP | upset_cip_SEAP) + plot_layout(widths=c(1,1,3))
 
-ggsave("Figure5_SEAP_AST.pdf", width=9, height=5)
-ggsave("Figure5_SEAP_AST.png", width=9, height=5, units="in")
+ggsave("Figure4_SEAP_AST.pdf", width=9, height=5)
+ggsave("Figure4_SEAP_AST.png", width=9, height=5, units="in")
 ```
