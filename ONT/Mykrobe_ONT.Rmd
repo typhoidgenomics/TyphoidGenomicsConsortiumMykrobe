@@ -88,6 +88,11 @@ ont.typhi %>% select(ONT_tetracycline, tetracycline)  %>% group_by(pick(everythi
 #trimethoprim-sulfamethoxazole
 ont.typhi %>% select(`ONT_trimethoprim-sulfamethoxazole`, `trimethoprim-sulfamethoxazole`)  %>% group_by(pick(everything())) %>% count()
 
+#sulfonamides
+ont.typhi %>% select(ONT_sulfonamides, sulfonamides)  %>% group_by(pick(everything())) %>% count()
+
+#trimethoprim
+ont.typhi %>% select(ONT_trimethoprim, trimethoprim)  %>% group_by(pick(everything())) %>% count()
 
 ```
 

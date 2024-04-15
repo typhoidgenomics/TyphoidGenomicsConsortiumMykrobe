@@ -343,19 +343,39 @@ a.sourceLine {
 ## 3 R: dfrA7;sul1                       R: dfrA7;sul1                       2
 ## 4 R: dfrA7;sul1;sul2                  R: dfrA7;sul1;sul2                 19
 ## 5 S                                   S                                  60</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">#sulfonamides</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_sulfonamides, sulfonamides)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 4 × 3
+## # Groups:   ONT_sulfonamides, sulfonamides [4]
+##   ONT_sulfonamides sulfonamides     n
+##   &lt;chr&gt;            &lt;chr&gt;        &lt;int&gt;
+## 1 R: sul1          R: sul1          5
+## 2 R: sul1;sul2     R: sul1;sul2    19
+## 3 R: sul2          R: sul2          9
+## 4 S                S               54</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">#trimethoprim</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_trimethoprim, trimethoprim)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 4 × 3
+## # Groups:   ONT_trimethoprim, trimethoprim [4]
+##   ONT_trimethoprim trimethoprim     n
+##   &lt;chr&gt;            &lt;chr&gt;        &lt;int&gt;
+## 1 R: dfrA14        R: dfrA14        4
+## 2 R: dfrA15        R: dfrA15        2
+## 3 R: dfrA7         R: dfrA7        21
+## 4 S                S               60</code></pre>
 </div>
 <div id="numbers-for-text---plasmid-replicons" class="section level1">
 <h1>numbers for text - plasmid replicons</h1>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncFIAHI1 </span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncFIAHI1, IncFIAHI1)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncFIAHI1 </span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncFIAHI1, IncFIAHI1)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 3
 ## # Groups:   ONT_IncFIAHI1, IncFIAHI1 [2]
 ##   ONT_IncFIAHI1 IncFIAHI1     n
 ##           &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt;
 ## 1             0         0    86
 ## 2             1         1     1</code></pre>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncHI1A</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncHI1A, IncHI1A)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncHI1A</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncHI1A, IncHI1A)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 3 × 3
 ## # Groups:   ONT_IncHI1A, IncHI1A [3]
 ##   ONT_IncHI1A IncHI1A     n
@@ -363,61 +383,61 @@ a.sourceLine {
 ## 1           0       0    85
 ## 2           0       1     1
 ## 3           1       1     1</code></pre>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co">#ONT_IncHI1BR27</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncHI1BR27, IncHI1BR27)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">#ONT_IncHI1BR27</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncHI1BR27, IncHI1BR27)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 3
 ## # Groups:   ONT_IncHI1BR27, IncHI1BR27 [2]
 ##   ONT_IncHI1BR27 IncHI1BR27     n
 ##            &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt;
 ## 1              0          0    85
 ## 2              1          1     2</code></pre>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co">#ONT_IncHI1_ST6 </span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncHI1_ST6, IncHI1_ST6)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co">#ONT_IncHI1_ST6 </span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncHI1_ST6, IncHI1_ST6)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 3
 ## # Groups:   ONT_IncHI1_ST6, IncHI1_ST6 [2]
 ##   ONT_IncHI1_ST6 IncHI1_ST6     n
 ##            &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt;
 ## 1              0          0    85
 ## 2              1          1     2</code></pre>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncY</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncY, IncY)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncY</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncY, IncY)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 3
 ## # Groups:   ONT_IncY, IncY [2]
 ##   ONT_IncY  IncY     n
 ##      &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
 ## 1        0     0    80
 ## 2        1     1     7</code></pre>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncX3</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncX3, IncX3)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncX3</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncX3, IncX3)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 3
 ## # Groups:   ONT_IncX3, IncX3 [2]
 ##   ONT_IncX3 IncX3     n
 ##       &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
 ## 1         0     0    86
 ## 2         1     1     1</code></pre>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncHI2A </span></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncHI2A, IncHI2A)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncHI2A </span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncHI2A, IncHI2A)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 3
 ## # Groups:   ONT_IncHI2A, IncHI2A [1]
 ##   ONT_IncHI2A IncHI2A     n
 ##         &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt;
 ## 1           0       0    87</code></pre>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncI1</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncI1, IncI1)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncI1</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncI1, IncI1)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 3
 ## # Groups:   ONT_IncI1, IncI1 [1]
 ##   ONT_IncI1 IncI1     n
 ##       &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
 ## 1         0     0    87</code></pre>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncL_M</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncL_M, IncL_M)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncL_M</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncL_M, IncL_M)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 3
 ## # Groups:   ONT_IncL_M, IncL_M [1]
 ##   ONT_IncL_M IncL_M     n
 ##        &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;
 ## 1          0      0    87</code></pre>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncFIB_pHCM2</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncFIB_pHCM2, IncFIB_pHCM2)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncFIB_pHCM2</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncFIB_pHCM2, IncFIB_pHCM2)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 3 × 3
 ## # Groups:   ONT_IncFIB_pHCM2, IncFIB_pHCM2 [3]
 ##   ONT_IncFIB_pHCM2 IncFIB_pHCM2     n
@@ -425,24 +445,24 @@ a.sourceLine {
 ## 1                0            0    72
 ## 2                0            1     3
 ## 3                1            1    12</code></pre>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncFIB_K</span></span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncFIB_K, IncFIB_K)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncFIB_K</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncFIB_K, IncFIB_K)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 3
 ## # Groups:   ONT_IncFIB_K, IncFIB_K [2]
 ##   ONT_IncFIB_K IncFIB_K     n
 ##          &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;
 ## 1            0        0    85
 ## 2            1        1     2</code></pre>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncN </span></span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncN, IncN)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncN </span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncN, IncN)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 3
 ## # Groups:   ONT_IncN, IncN [2]
 ##   ONT_IncN  IncN     n
 ##      &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
 ## 1        0     0    84
 ## 2        1     1     3</code></pre>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co">#z66</span></span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_z66, z66)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co">#z66</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_z66, z66)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 3
 ## # Groups:   ONT_z66, z66 [1]
 ##   ONT_z66   z66     n
