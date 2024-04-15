@@ -55,7 +55,16 @@ not.typhi %>% group_by(ONT_species,species,depth)  %>% count()
 
 
 ```
+# numbers for text - genotype
+```{r}
+#genotypes
+genotype <- ont.typhi %>% select(ONT_genotype, genotype) %>%  
+  mutate(Genotype_match = if_else(ONT_genotype == genotype, "Genotype Match", "Mismatch")) 
 
+genotype %>% group_by(pick(Genotype_match)) %>% count()
+
+genotype %>% filter(Genotype_match == "Mismatch")
+```
 # numbers for text - AMR
 ```{r}
 #ceftriaxone
