@@ -22,7 +22,7 @@ This repository holds the tabulated data and code behind the paper of the [Globa
 
 * csv file of all isolates with publicly availble antimicrobial susceptibility testing (AST) data sourced from three separate datasets used for validation of phenotype prediction. Includes minimum inhibitory concentration (MIC) data from the [UK Health Security Agency (UKHSA)](https://doi.org/10.1099/mgen.0.000633) for n=852 isolates (following EUCAST standards), and the [US Centres for Disease Control and Prevention (CDC)](https://wwwn.cdc.gov/narmsnow/) for n=720 isolates (following CLSI standards), and disk diffusion data (following CLSI standards) for n=2,446 isolates collected and analysed from three countries as part of the [Surveillance for Enteric Fever in Asia Project (SEAP)](https://doi.org/10.1016/s2666-5247(22)00093-3).
 
-`Supplementary_Table_5.csv`
+`Supplementary_Table_6.csv`
 
 * Details of genomes used for validation of typing from nanopore reads (i.e. with matched Illumina and ONT data), including data accessions, ONT sequencing details and Mykrobe calls from both sequence data types.
 
