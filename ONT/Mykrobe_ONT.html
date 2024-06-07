@@ -130,7 +130,7 @@ a.sourceLine {
 <section class="page-header">
 <h1 class="title toc-ignore project-name">Global Typhoid Genomics Consortium - Mykrobe - ONT comparison</h1>
 <h4 class="author project-author">Danielle Ingle, Kat Holt</h4>
-<h4 class="date project-date">16 April, 2024</h4>
+<h4 class="date project-date">07 June, 2024</h4>
 </section>
 
 
@@ -186,7 +186,7 @@ a.sourceLine {
 ## [49] assertthat_0.2.1 rmarkdown_2.9    httr_1.4.2       rstudioapi_0.13 
 ## [53] R6_2.5.0         compiler_4.1.0</code></pre>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#ONT and Illuminia calls</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ont <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;../Supplementary_Table_5.csv&quot;</span>)</span></code></pre></div>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ont <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;../Supplementary_Table_6.csv&quot;</span>)</span></code></pre></div>
 <pre><code>## 
 ## ── Column specification ────────────────────────────────────────────────────────
 ## cols(
@@ -203,15 +203,15 @@ a.sourceLine {
 ##   `Included in TGC paper (medRxov Dec2022)` = col_character(),
 ##   `Literature Link` = col_character(),
 ##   `Isolating Lab` = col_character(),
-##   `Lab Contact` = col_logical(),
+##   `Lab Contact` = col_character(),
 ##   `ONT Flowcell` = col_character(),
 ##   `ONT Device` = col_character(),
 ##   `ONT Basecaller` = col_character(),
 ##   `ONT Processing` = col_character(),
+##   `DNA extraction` = col_character(),
 ##   ONT_species = col_character(),
-##   ONT_genotype = col_character(),
-##   ONT_confidence = col_character()
-##   # ... with 33 more columns
+##   ONT_genotype = col_character()
+##   # ... with 34 more columns
 ## )
 ## ℹ Use `spec()` for the full column specifications.</code></pre>
 </div>
@@ -224,7 +224,7 @@ a.sourceLine {
 ##   &lt;chr&gt;       &lt;chr&gt;     &lt;int&gt;
 ## 1 not typhi   typhi         5
 ## 2 typhi       not typhi     1
-## 3 typhi       typhi        87</code></pre>
+## 3 typhi       typhi        92</code></pre>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#filter to those that are Typhi in both read sets</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="ot">&lt;-</span> ont <span class="sc">%&gt;%</span> <span class="fu">filter</span>(ONT_species <span class="sc">==</span> <span class="st">&quot;typhi&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(species <span class="sc">==</span> <span class="st">&quot;typhi&quot;</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -254,7 +254,7 @@ a.sourceLine {
 ## # Groups:   Genotype_match [2]
 ##   Genotype_match     n
 ##   &lt;chr&gt;          &lt;int&gt;
-## 1 Genotype Match    84
+## 1 Genotype Match    89
 ## 2 Mismatch           3</code></pre>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>genotype <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Genotype_match <span class="sc">==</span> <span class="st">&quot;Mismatch&quot;</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 3 × 3
@@ -274,44 +274,44 @@ a.sourceLine {
 ##   &lt;chr&gt;           &lt;chr&gt;          &lt;int&gt;
 ## 1 R: blaCTX-M-15  R: blaCTX-M-15     5
 ## 2 R: blaSHV-12    R: blaSHV-12       1
-## 3 S               S                 81</code></pre>
+## 3 S               S                 86</code></pre>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#azithromycin</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_azithromycin, azithromycin)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 3
 ## # Groups:   ONT_azithromycin, azithromycin [1]
 ##   ONT_azithromycin azithromycin     n
 ##   &lt;chr&gt;            &lt;chr&gt;        &lt;int&gt;
-## 1 S                S               87</code></pre>
+## 1 S                S               92</code></pre>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#ciprofloxacin</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_ciprofloxacin, ciprofloxacin)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 17 × 3
 ## # Groups:   ONT_ciprofloxacin, ciprofloxacin [17]
 ##    ONT_ciprofloxacin                ciprofloxacin                        n
 ##    &lt;chr&gt;                            &lt;chr&gt;                            &lt;int&gt;
-##  1 I: gyrA_D87G                     I: gyrA_D87G                         2
+##  1 I: gyrA_D87G                     I: gyrA_D87G                         3
 ##  2 I: gyrA_D87N                     I: gyrA_D87N                         4
 ##  3 I: gyrA_D87Y                     I: gyrA_D87Y                         1
-##  4 I: gyrA_S83F                     I: gyrA_S83F                        14
+##  4 I: gyrA_S83F                     I: gyrA_S83F                        15
 ##  5 I: gyrA_S83F                     I: gyrB_S464F                        1
 ##  6 I: gyrA_S83F;parC_E84G           I: gyrA_S83F;parC_E84G               1
 ##  7 I: gyrA_S83F;parC_E84K           I: gyrA_S83F;parC_E84K               1
 ##  8 I: gyrA_S83Y                     I: gyrA_S83Y                         9
 ##  9 I: gyrA_S83Y                     R: gyrA_S83Y;qnrS1                   1
-## 10 I: gyrB_S464F                    I: gyrB_S464F                        1
+## 10 I: gyrB_S464F                    I: gyrB_S464F                        2
 ## 11 I: gyrB_S464F                    S                                    3
 ## 12 R: gyrA_S83F;gyrA_D87N;parC_S80I R: gyrA_S83F;gyrA_D87N;parC_S80I     3
 ## 13 R: gyrA_S83F;qnrS1               R: gyrA_S83F;qnrS1                   4
 ## 14 R: gyrA_S83Y;qnrS1               R: gyrA_S83Y;qnrS1                   1
 ## 15 S                                I: gyrA_S83F                         2
 ## 16 S                                I: gyrB_S464F                        1
-## 17 S                                S                                   38</code></pre>
+## 17 S                                S                                   40</code></pre>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#ampicillin</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_ampicillin, ampicillin)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 3
 ## # Groups:   ONT_ampicillin, ampicillin [2]
 ##   ONT_ampicillin ampicillin       n
 ##   &lt;chr&gt;          &lt;chr&gt;        &lt;int&gt;
-## 1 R: blaTEM-1D   R: blaTEM-1D    30
+## 1 R: blaTEM-1D   R: blaTEM-1D    35
 ## 2 S              S               57</code></pre>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#chloramphenicol</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_chloramphenicol, chloramphenicol)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
@@ -319,7 +319,7 @@ a.sourceLine {
 ## # Groups:   ONT_chloramphenicol, chloramphenicol [3]
 ##   ONT_chloramphenicol chloramphenicol     n
 ##   &lt;chr&gt;               &lt;chr&gt;           &lt;int&gt;
-## 1 R: catA1            R: catA1           20
+## 1 R: catA1            R: catA1           25
 ## 2 S                   R: catA1            1
 ## 3 S                   S                  66</code></pre>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">#tetracycline</span></span>
@@ -330,7 +330,7 @@ a.sourceLine {
 ##   &lt;chr&gt;            &lt;chr&gt;        &lt;int&gt;
 ## 1 R: tetA          R: tetA          7
 ## 2 R: tetB          R: tetB          2
-## 3 S                S               78</code></pre>
+## 3 S                S               83</code></pre>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#trimethoprim-sulfamethoxazole</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="st">`</span><span class="at">ONT_trimethoprim-sulfamethoxazole</span><span class="st">`</span>, <span class="st">`</span><span class="at">trimethoprim-sulfamethoxazole</span><span class="st">`</span>)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 5 × 3
@@ -341,7 +341,7 @@ a.sourceLine {
 ## 1 R: dfrA14;sul2                      R: dfrA14;sul2                      4
 ## 2 R: dfrA15;sul1                      R: dfrA15;sul1                      2
 ## 3 R: dfrA7;sul1                       R: dfrA7;sul1                       2
-## 4 R: dfrA7;sul1;sul2                  R: dfrA7;sul1;sul2                 19
+## 4 R: dfrA7;sul1;sul2                  R: dfrA7;sul1;sul2                 24
 ## 5 S                                   S                                  60</code></pre>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">#sulfonamides</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_sulfonamides, sulfonamides)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
@@ -350,7 +350,7 @@ a.sourceLine {
 ##   ONT_sulfonamides sulfonamides     n
 ##   &lt;chr&gt;            &lt;chr&gt;        &lt;int&gt;
 ## 1 R: sul1          R: sul1          5
-## 2 R: sul1;sul2     R: sul1;sul2    19
+## 2 R: sul1;sul2     R: sul1;sul2    24
 ## 3 R: sul2          R: sul2          9
 ## 4 S                S               54</code></pre>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">#trimethoprim</span></span>
@@ -361,7 +361,7 @@ a.sourceLine {
 ##   &lt;chr&gt;            &lt;chr&gt;        &lt;int&gt;
 ## 1 R: dfrA14        R: dfrA14        4
 ## 2 R: dfrA15        R: dfrA15        2
-## 3 R: dfrA7         R: dfrA7        21
+## 3 R: dfrA7         R: dfrA7        26
 ## 4 S                S               60</code></pre>
 </div>
 <div id="numbers-for-text---plasmid-replicons" class="section level1">
@@ -372,7 +372,7 @@ a.sourceLine {
 ## # Groups:   ONT_IncFIAHI1, IncFIAHI1 [2]
 ##   ONT_IncFIAHI1 IncFIAHI1     n
 ##           &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt;
-## 1             0         0    86
+## 1             0         0    91
 ## 2             1         1     1</code></pre>
 <div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncHI1A</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncHI1A, IncHI1A)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
@@ -380,7 +380,7 @@ a.sourceLine {
 ## # Groups:   ONT_IncHI1A, IncHI1A [3]
 ##   ONT_IncHI1A IncHI1A     n
 ##         &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt;
-## 1           0       0    85
+## 1           0       0    90
 ## 2           0       1     1
 ## 3           1       1     1</code></pre>
 <div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">#ONT_IncHI1BR27</span></span>
@@ -389,7 +389,7 @@ a.sourceLine {
 ## # Groups:   ONT_IncHI1BR27, IncHI1BR27 [2]
 ##   ONT_IncHI1BR27 IncHI1BR27     n
 ##            &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt;
-## 1              0          0    85
+## 1              0          0    90
 ## 2              1          1     2</code></pre>
 <div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co">#ONT_IncHI1_ST6 </span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncHI1_ST6, IncHI1_ST6)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
@@ -397,7 +397,7 @@ a.sourceLine {
 ## # Groups:   ONT_IncHI1_ST6, IncHI1_ST6 [2]
 ##   ONT_IncHI1_ST6 IncHI1_ST6     n
 ##            &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt;
-## 1              0          0    85
+## 1              0          0    90
 ## 2              1          1     2</code></pre>
 <div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncY</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncY, IncY)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
@@ -405,7 +405,7 @@ a.sourceLine {
 ## # Groups:   ONT_IncY, IncY [2]
 ##   ONT_IncY  IncY     n
 ##      &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
-## 1        0     0    80
+## 1        0     0    85
 ## 2        1     1     7</code></pre>
 <div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncX3</span></span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncX3, IncX3)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
@@ -413,7 +413,7 @@ a.sourceLine {
 ## # Groups:   ONT_IncX3, IncX3 [2]
 ##   ONT_IncX3 IncX3     n
 ##       &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
-## 1         0     0    86
+## 1         0     0    91
 ## 2         1     1     1</code></pre>
 <div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncHI2A </span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncHI2A, IncHI2A)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
@@ -421,28 +421,28 @@ a.sourceLine {
 ## # Groups:   ONT_IncHI2A, IncHI2A [1]
 ##   ONT_IncHI2A IncHI2A     n
 ##         &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt;
-## 1           0       0    87</code></pre>
+## 1           0       0    92</code></pre>
 <div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncI1</span></span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncI1, IncI1)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 3
 ## # Groups:   ONT_IncI1, IncI1 [1]
 ##   ONT_IncI1 IncI1     n
 ##       &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
-## 1         0     0    87</code></pre>
+## 1         0     0    92</code></pre>
 <div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncL_M</span></span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncL_M, IncL_M)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 1 × 3
 ## # Groups:   ONT_IncL_M, IncL_M [1]
 ##   ONT_IncL_M IncL_M     n
 ##        &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;
-## 1          0      0    87</code></pre>
+## 1          0      0    92</code></pre>
 <div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncFIB_pHCM2</span></span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncFIB_pHCM2, IncFIB_pHCM2)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 3 × 3
 ## # Groups:   ONT_IncFIB_pHCM2, IncFIB_pHCM2 [3]
 ##   ONT_IncFIB_pHCM2 IncFIB_pHCM2     n
 ##              &lt;dbl&gt;        &lt;dbl&gt; &lt;int&gt;
-## 1                0            0    72
+## 1                0            0    77
 ## 2                0            1     3
 ## 3                1            1    12</code></pre>
 <div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncFIB_K</span></span>
@@ -451,7 +451,7 @@ a.sourceLine {
 ## # Groups:   ONT_IncFIB_K, IncFIB_K [2]
 ##   ONT_IncFIB_K IncFIB_K     n
 ##          &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;
-## 1            0        0    85
+## 1            0        0    90
 ## 2            1        1     2</code></pre>
 <div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co">#IncN </span></span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_IncN, IncN)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
@@ -459,7 +459,7 @@ a.sourceLine {
 ## # Groups:   ONT_IncN, IncN [2]
 ##   ONT_IncN  IncN     n
 ##      &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
-## 1        0     0    84
+## 1        0     0    89
 ## 2        1     1     3</code></pre>
 <div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co">#z66</span></span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>ont.typhi <span class="sc">%&gt;%</span> <span class="fu">select</span>(ONT_z66, z66)  <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(<span class="fu">pick</span>(<span class="fu">everything</span>())) <span class="sc">%&gt;%</span> <span class="fu">count</span>()</span></code></pre></div>
@@ -467,7 +467,7 @@ a.sourceLine {
 ## # Groups:   ONT_z66, z66 [1]
 ##   ONT_z66   z66     n
 ##     &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
-## 1       0     0    87</code></pre>
+## 1       0     0    92</code></pre>
 </div>
 </section>
 
