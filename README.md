@@ -1,6 +1,6 @@
 # Typhoid Genomics Consortium Paper: Typhi Mykrobe (2024)
 
-This repository holds the tabulated data and code behind the paper of the [Global Typhoid Genomics Consortium](https://typhoidgenomics.org/), "Typhi Mykrobe: fast and accurate lineage and antimicrobial resistance genotyping direct from sequence reads for the typhoid fever agent _Salmonella_ Typhi".
+This repository holds the tabulated data and code behind the paper of the [Global Typhoid Genomics Consortium](https://typhoidgenomics.org/), "Typhi Mykrobe: fast and accurate lineage identification and antimicrobial resistance genotyping directly from sequence reads for the typhoid fever agent _Salmonella_ Typhi".
 
 ## Licenses and and re-use:
 
@@ -18,9 +18,17 @@ This repository holds the tabulated data and code behind the paper of the [Globa
 
 * Line list of all genomes used for validation, including sequence data accessions; plus genome-derived genotype, AMR and plasmid variables (where available) for mapping-based GenoTyphi lineage calls, and PathogenWatch.
 
+`Supplementary_Table_3.xlsx`
+
+* Details of AMR genotype calls comparison (in `/AMRplasmid` directory
+  
 `Supplementary_Table_4.csv`
 
 * csv file of all isolates with publicly availble antimicrobial susceptibility testing (AST) data sourced from three separate datasets used for validation of phenotype prediction. Includes minimum inhibitory concentration (MIC) data from the [UK Health Security Agency (UKHSA)](https://doi.org/10.1099/mgen.0.000633) for n=852 isolates (following EUCAST standards), and the [US Centres for Disease Control and Prevention (CDC)](https://wwwn.cdc.gov/narmsnow/) for n=720 isolates (following CLSI standards), and disk diffusion data (following CLSI standards) for n=2,446 isolates collected and analysed from three countries as part of the [Surveillance for Enteric Fever in Asia Project (SEAP)](https://doi.org/10.1016/s2666-5247(22)00093-3).
+
+`Supplementary_Table_5.csv`
+
+* Comparison and error rates for AMR genotype and phenotype data (in `/AST` directory
 
 `Supplementary_Table_6.csv`
 
