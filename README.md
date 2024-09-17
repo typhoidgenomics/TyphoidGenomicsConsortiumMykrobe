@@ -20,7 +20,7 @@ This repository holds the tabulated data and code behind the paper of the [Globa
 
 `Supplementary_Table_3.xlsx`
 
-* Details of AMR genotype calls comparison (in `/AMRplasmid` directory
+* Details of AMR genotype calls comparison (in `/AMRplasmid` directory)
   
 `Supplementary_Table_4.csv`
 
@@ -28,7 +28,7 @@ This repository holds the tabulated data and code behind the paper of the [Globa
 
 `Supplementary_Table_5.csv`
 
-* Comparison and error rates for AMR genotype and phenotype data (in `/AST` directory
+* Comparison and error rates for AMR genotype and phenotype data (in `/AST` directory)
 
 `Supplementary_Table_6.csv`
 
