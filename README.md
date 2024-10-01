@@ -1,6 +1,6 @@
 # Typhoid Genomics Consortium Paper: Typhi Mykrobe (2024)
 
-This repository holds the tabulated data and code behind the paper of the [Global Typhoid Genomics Consortium](https://typhoidgenomics.org/), "Typhi Mykrobe: fast and accurate lineage identification and antimicrobial resistance genotyping directly from sequence reads for the typhoid fever agent _Salmonella_ Typhi".
+This repository holds the tabulated data and code behind the paper of the [Global Typhoid Genomics Consortium](https://typhoidgenomics.org/), "Typhi Mykrobe: fast and accurate lineage identification and antimicrobial resistance genotyping directly from sequence reads for the typhoid fever agent _Salmonella_ Typhi" (preprint available in [BioRxiv](https://doi.org/10.1101/2024.09.30.613582)).
 
 ## Licenses and and re-use:
 
