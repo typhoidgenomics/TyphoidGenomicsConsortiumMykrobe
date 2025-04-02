@@ -50,6 +50,17 @@ gt %>% group_by(species)  %>% count()
 typhi <- gt %>% filter(species == "typhi")
 ```
 
+# number of genotypes assayed
+```{r}
+mykrobe_call <- typhi %>% group_by(genotype) %>% count()
+mykrobe_call %>% nrow()
+
+genotypes_specified <- read_csv("https://raw.githubusercontent.com/typhoidgenomics/genotyphi/main/GenoTyphi_specification.csv") %>% head(n=87) # at time of paper there were 87 specified
+
+# what is not called
+genotypes_specified_87 %>% filter(!(Genotype %in% mykrobe_call$genotype))
+```
+
 # concordance between original mapping-based implementation and Mykrobe
 ```{r}
 
