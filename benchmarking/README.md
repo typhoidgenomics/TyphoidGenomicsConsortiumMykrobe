@@ -4,8 +4,7 @@ We investigated the average run time for Typhi Mykrobe to demonstrate the rapid 
 We demonstrate that the run time for Typhi Mykrobe’s `mykrobe predict` command on a modern computer was <1minute to complete (Supplementary Figure 2). The `mykrobe predict` command can be run with multiple threads using the `--threads`/`-t` option. Up to ~4 threads will increase performance. Using multiple threads on a very fast CPU, the run time for each genome was reduced to seconds (Supplementary Figure 2). Further, `mykrobe predict` is very memory-efficient and will typically use less than 100 MB of RAM per genome. 
 
 ![Typhi Mykrobe benchmarking results](Supplementary_Figure2_TyphiMykrobe.png)
-Supplementary Figure 2: Run-time of Typhi Mykrobe of 100 Typhi genomes 
+**Supplementary Figure 2**: Run-time of Typhi Mykrobe of 100 Typhi genomes 
 The run time for 100 Typhi genomes on three different computers. The number of threads used is shown on the x-axis. The time (seconds per sample) to run on each genome is shown on the y axis. Boxes show the interquartile range (IQR), horizontal lines indicate the median, whiskers extend to 1.5×IQR and values beyond this range are shown as outliers.
-!
 
 
