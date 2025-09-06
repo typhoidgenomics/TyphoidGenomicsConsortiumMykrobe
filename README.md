@@ -77,3 +77,9 @@ Note that Typhi Mykrobe is not a QC tool. It is recommended that users continue 
 
 * `Mykrobe_ONT.html` = knitR output of Rmd file, including output figures
 
+## Benchmarking
+
+`/benchmarking` directory
+* The README file provides details of the benchmarking analyses. 
+ 
+* Supplementary figure file (PNG format) showing run time for Typhi Mykrobe. 
