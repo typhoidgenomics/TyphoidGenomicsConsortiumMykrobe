@@ -1,6 +1,6 @@
 # Data and Code Supporting Typhi Mykrobe Development and Validation
 
-This repository holds the tabulated data and code behind the paper of the [Global Typhoid Genomics Consortium](https://typhoidgenomics.org/), "Typhi Mykrobe: fast and accurate lineage identification and antimicrobial resistance genotyping directly from sequence reads for the typhoid fever agent _Salmonella_ Typhi" published in Genome Medicine, 2025 (preprint available in [BioRxiv](https://doi.org/10.1101/2024.09.30.613582)). 
+This repository holds the tabulated data and code behind the paper of the [Global Typhoid Genomics Consortium](https://typhoidgenomics.org/), "Typhi Mykrobe: fast and accurate lineage identification and antimicrobial resistance genotyping directly from sequence reads for the typhoid fever agent _Salmonella_ Typhi" published in Genome Medicine, 2025 (preprint available in [BioRxiv](https://doi.org/10.1101/2024.09.30.613582)). [![DOI](https://zenodo.org/badge/709232722.svg)](https://doi.org/10.5281/zenodo.17117922)
 
 Note that Typhi Mykrobe is not a QC tool. It is recommended that users continue to undertake their own QC on short and long read data.
 
